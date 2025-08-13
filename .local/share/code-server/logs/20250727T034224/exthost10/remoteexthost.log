@@ -1,0 +1,16 @@
+2025-08-12 20:05:46.552 [info] Extension host with pid 62404 started
+2025-08-12 20:05:46.559 [info] Lock '/home/ubuntu/.local/share/code-server/User/workspaceStorage/36b1ff74/vscode.lock': Lock acquired.
+2025-08-12 20:05:46.802 [info] ExtensionService#_doActivateExtension vscode.html-language-features, startup: false, activationEvent: 'onLanguage:html'
+2025-08-12 20:05:46.803 [info] ExtensionService#_doActivateExtension vscode.emmet, startup: false, activationEvent: 'onLanguage'
+2025-08-12 20:05:47.729 [info] ExtensionService#_doActivateExtension vscode.git-base, startup: true, activationEvent: '*', root cause: vscode.git
+2025-08-12 20:05:47.919 [info] ExtensionService#_doActivateExtension vscode.git, startup: true, activationEvent: '*'
+2025-08-12 20:05:47.920 [info] ExtensionService#_doActivateExtension vscode.github, startup: true, activationEvent: '*'
+2025-08-12 20:05:48.258 [info] Eager extensions activated
+2025-08-12 20:05:48.259 [info] ExtensionService#_doActivateExtension vscode.debug-auto-launch, startup: false, activationEvent: 'onStartupFinished'
+2025-08-12 20:05:48.259 [info] ExtensionService#_doActivateExtension vscode.merge-conflict, startup: false, activationEvent: 'onStartupFinished'
+2025-08-12 20:05:48.783 [info] ExtensionService#_doActivateExtension vscode.github-authentication, startup: false, activationEvent: 'onAuthenticationRequest:github'
+2025-08-12 20:42:48.029 [error] Error: read ETIMEDOUT
+	at TCP.onStreamRead (node:internal/stream_base_commons:216:20)
+2025-08-12 20:48:27.499 [info] Extension host terminating: renderer disconnected for too long (2)
+2025-08-12 20:48:27.500 [info] Lock '/home/ubuntu/.local/share/code-server/User/workspaceStorage/36b1ff74/vscode.lock': Marking the lockfile as scheduled to be released in 6000 ms.
+2025-08-12 20:48:27.775 [info] Extension host with pid 62404 exiting with code 0

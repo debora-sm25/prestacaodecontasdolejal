@@ -1,0 +1,98 @@
+2025-08-12 20:05:48.845 [info] [main] Log level: Info
+2025-08-12 20:05:48.845 [info] [main] Validating found git in: "git"
+2025-08-12 20:05:48.845 [info] [main] Using git "2.34.1" from "git"
+2025-08-12 20:05:48.845 [info] [Model][doInitialScan] Initial repository scan started
+2025-08-12 20:05:48.845 [info] > git rev-parse --show-toplevel [3ms]
+2025-08-12 20:05:48.845 [info] fatal: not a git repository (or any of the parent directories): .git
+2025-08-12 20:05:48.845 [info] > git rev-parse --show-toplevel [1ms]
+2025-08-12 20:05:48.845 [info] > git rev-parse --git-dir --git-common-dir [2ms]
+2025-08-12 20:05:48.845 [info] [Model][openRepository] Opened repository (path): /home/ubuntu/prestacao-contas-manual
+2025-08-12 20:05:48.845 [info] [Model][openRepository] Opened repository (real path): /home/ubuntu/prestacao-contas-manual
+2025-08-12 20:05:48.845 [info] > git config --get commit.template [5ms]
+2025-08-12 20:05:48.845 [info] [Git][getRemotes] No remotes found in the git config file
+2025-08-12 20:05:48.845 [info] > git rev-parse --show-toplevel [7ms]
+2025-08-12 20:05:48.845 [info] fatal: not a git repository (or any of the parent directories): .git
+2025-08-12 20:05:48.845 [info] > git for-each-ref --format=%(refname)%00%(upstream:short)%00%(objectname)%00%(upstream:track)%00%(upstream:remotename)%00%(upstream:remoteref) refs/heads/master refs/remotes/master [5ms]
+2025-08-12 20:05:48.845 [warning] [Git][getBranch] No such branch: master
+2025-08-12 20:05:48.845 [info] > git status -z -uall [5ms]
+2025-08-12 20:05:48.845 [info] > git rev-parse --show-toplevel [12ms]
+2025-08-12 20:05:48.845 [info] fatal: not a git repository (or any of the parent directories): .git
+2025-08-12 20:05:48.845 [info] > git for-each-ref --sort -committerdate --format %(refname)%00%(objectname)%00%(*objectname) [3ms]
+2025-08-12 20:05:48.845 [info] > git for-each-ref --format=%(refname)%00%(upstream:short)%00%(objectname)%00%(upstream:track)%00%(upstream:remotename)%00%(upstream:remoteref) refs/heads/master refs/remotes/master [12ms]
+2025-08-12 20:05:48.845 [warning] [Git][getBranch] No such branch: master
+2025-08-12 20:05:48.845 [error] [GitHistoryProvider][resolveHEADMergeBase] Failed to resolve merge base for master: Error: No such branch: master.
+2025-08-12 20:05:48.845 [info] > git config --get commit.template [3ms]
+2025-08-12 20:05:48.845 [info] > git rev-parse --show-toplevel [7ms]
+2025-08-12 20:05:48.845 [info] fatal: not a git repository (or any of the parent directories): .git
+2025-08-12 20:05:48.845 [info] [Git][getRemotes] No remotes found in the git config file
+2025-08-12 20:05:48.845 [info] > git rev-parse --show-toplevel [3ms]
+2025-08-12 20:05:48.845 [info] fatal: not a git repository (or any of the parent directories): .git
+2025-08-12 20:05:48.845 [info] > git for-each-ref --format=%(refname)%00%(upstream:short)%00%(objectname)%00%(upstream:track)%00%(upstream:remotename)%00%(upstream:remoteref) refs/heads/master refs/remotes/master [5ms]
+2025-08-12 20:05:48.845 [warning] [Git][getBranch] No such branch: master
+2025-08-12 20:05:48.845 [info] > git status -z -uall [4ms]
+2025-08-12 20:05:48.845 [info] > git rev-parse --show-toplevel [7ms]
+2025-08-12 20:05:48.845 [info] fatal: not a git repository (or any of the parent directories): .git
+2025-08-12 20:05:48.845 [info] > git for-each-ref --sort -committerdate --format %(refname)%00%(objectname)%00%(*objectname) [5ms]
+2025-08-12 20:05:48.845 [info] > git rev-parse --show-toplevel [4ms]
+2025-08-12 20:05:48.845 [info] fatal: not a git repository (or any of the parent directories): .git
+2025-08-12 20:05:48.845 [info] > git rev-parse --show-toplevel [56ms]
+2025-08-12 20:05:48.845 [info] > git rev-parse --git-dir --git-common-dir [5ms]
+2025-08-12 20:05:48.845 [info] [Model][openRepository] Opened repository (path): /home/ubuntu/.nvm
+2025-08-12 20:05:48.845 [info] [Model][openRepository] Opened repository (real path): /home/ubuntu/.nvm
+2025-08-12 20:05:48.845 [info] > git config --get commit.template [6ms]
+2025-08-12 20:05:48.845 [info] > git rev-parse --show-toplevel [7ms]
+2025-08-12 20:05:48.845 [info] fatal: not a git repository (or any of the parent directories): .git
+2025-08-12 20:05:48.845 [info] > git for-each-ref --format %(refname)%00%(objectname)%00%(*objectname) refs/tags [7ms]
+2025-08-12 20:05:48.845 [info] > git rev-parse --show-toplevel [12ms]
+2025-08-12 20:05:48.845 [info] fatal: not a git repository (or any of the parent directories): .git
+2025-08-12 20:05:48.845 [info] > git status -z -uall [49ms]
+2025-08-12 20:05:48.845 [info] > git for-each-ref --sort -committerdate --format %(refname)%00%(objectname)%00%(*objectname) [44ms]
+2025-08-12 20:05:48.845 [info] > git rev-parse --show-toplevel [4ms]
+2025-08-12 20:05:48.845 [info] fatal: not a git repository (or any of the parent directories): .git
+2025-08-12 20:05:48.845 [info] > git rev-parse --show-toplevel [8ms]
+2025-08-12 20:05:48.845 [info] fatal: not a git repository (or any of the parent directories): .git
+2025-08-12 20:05:48.845 [info] > git config --get commit.template [8ms]
+2025-08-12 20:05:48.845 [info] > git rev-parse --show-toplevel [5ms]
+2025-08-12 20:05:48.845 [info] fatal: not a git repository (or any of the parent directories): .git
+2025-08-12 20:05:48.845 [info] [Model][doInitialScan] Initial repository scan completed - repositories (2), closed repositories (0), parent repositories (0), unsafe repositories (0)
+2025-08-12 20:05:48.845 [info] > git for-each-ref --format %(refname)%00%(objectname)%00%(*objectname) refs/tags [5ms]
+2025-08-12 20:05:48.845 [info] > git for-each-ref --sort -committerdate --format %(refname)%00%(objectname)%00%(*objectname) [5ms]
+2025-08-12 20:05:48.845 [info] > git status -z -uall [18ms]
+2025-08-12 20:05:49.009 [info] > git rev-parse --show-toplevel [23ms]
+2025-08-12 20:05:49.009 [info] fatal: not a git repository (or any of the parent directories): .git
+2025-08-12 20:05:49.118 [info] > git check-ignore -v -z --stdin [2ms]
+2025-08-12 20:05:49.155 [info] > git rev-parse --show-toplevel [2ms]
+2025-08-12 20:05:49.340 [info] > git show --textconv :index.html [10ms]
+2025-08-12 20:05:49.340 [info] > git show --textconv HEAD:index.html [7ms]
+2025-08-12 20:05:49.340 [info] > git ls-files --stage -- index.html [4ms]
+2025-08-12 20:05:49.347 [info] > git cat-file -s 43c937a236278a2ff5f4c9897d58ff383076afee [4ms]
+2025-08-12 20:05:49.348 [info] > git ls-tree -l HEAD -- index.html [9ms]
+2025-08-12 20:05:49.348 [info] fatal: Not a valid object name HEAD
+2025-08-12 20:05:49.351 [info] > git hash-object -t tree /dev/null [5ms]
+2025-08-12 20:05:49.352 [warning] [GitFileSystemProvider][readFile] File not found - git:/home/ubuntu/prestacao-contas-manual/index.html.git?%7B%22path%22%3A%22%2Fhome%2Fubuntu%2Fprestacao-contas-manual%2Findex.html%22%2C%22ref%22%3A%22HEAD%22%7D
+2025-08-12 20:05:49.352 [info] > git hash-object -t tree /dev/null [1ms]
+2025-08-12 20:05:49.353 [warning] [GitFileSystemProvider][stat] File not found - git:/home/ubuntu/prestacao-contas-manual/index.html.git?%7B%22path%22%3A%22%2Fhome%2Fubuntu%2Fprestacao-contas-manual%2Findex.html%22%2C%22ref%22%3A%22HEAD%22%7D
+2025-08-12 20:06:51.341 [info] [Git][getRemotes] No remotes found in the git config file
+2025-08-12 20:06:51.341 [info] > git config --get commit.template [4ms]
+2025-08-12 20:06:51.342 [info] > git for-each-ref --format=%(refname)%00%(upstream:short)%00%(objectname)%00%(upstream:track)%00%(upstream:remotename)%00%(upstream:remoteref) refs/heads/master refs/remotes/master [1ms]
+2025-08-12 20:06:51.342 [warning] [Git][getBranch] No such branch: master
+2025-08-12 20:06:51.348 [info] > git status -z -uall [3ms]
+2025-08-12 20:06:51.350 [info] > git for-each-ref --sort -committerdate --format %(refname)%00%(objectname)%00%(*objectname) [2ms]
+2025-08-12 20:08:19.267 [info] > git check-ignore -v -z --stdin [5ms]
+2025-08-12 20:08:19.268 [info] > git check-ignore -v -z --stdin [2ms]
+2025-08-12 20:10:50.535 [info] > git show --textconv :index.html [8ms]
+2025-08-12 20:10:50.535 [info] > git show --textconv HEAD:index.html [5ms]
+2025-08-12 20:10:50.535 [info] > git ls-files --stage -- index.html [3ms]
+2025-08-12 20:10:50.538 [warning] [GitFileSystemProvider][readFile] File not found - git:/home/ubuntu/prestacao-contas-manual/index.html.git?%7B%22path%22%3A%22%2Fhome%2Fubuntu%2Fprestacao-contas-manual%2Findex.html%22%2C%22ref%22%3A%22HEAD%22%7D
+2025-08-12 20:10:50.539 [info] > git cat-file -s 43c937a236278a2ff5f4c9897d58ff383076afee [1ms]
+2025-08-12 20:10:50.540 [info] > git ls-tree -l HEAD -- index.html [5ms]
+2025-08-12 20:10:50.540 [info] fatal: Not a valid object name HEAD
+2025-08-12 20:10:50.540 [warning] [GitFileSystemProvider][stat] File not found - git:/home/ubuntu/prestacao-contas-manual/index.html.git?%7B%22path%22%3A%22%2Fhome%2Fubuntu%2Fprestacao-contas-manual%2Findex.html%22%2C%22ref%22%3A%22HEAD%22%7D
+2025-08-12 20:14:32.234 [info] > git show --textconv :index.html [7ms]
+2025-08-12 20:14:32.234 [info] > git show --textconv HEAD:index.html [5ms]
+2025-08-12 20:14:32.234 [info] > git ls-files --stage -- index.html [2ms]
+2025-08-12 20:14:32.237 [warning] [GitFileSystemProvider][readFile] File not found - git:/home/ubuntu/prestacao-contas-manual/index.html.git?%7B%22path%22%3A%22%2Fhome%2Fubuntu%2Fprestacao-contas-manual%2Findex.html%22%2C%22ref%22%3A%22HEAD%22%7D
+2025-08-12 20:14:32.238 [info] > git cat-file -s 43c937a236278a2ff5f4c9897d58ff383076afee [2ms]
+2025-08-12 20:14:32.238 [info] > git ls-tree -l HEAD -- index.html [4ms]
+2025-08-12 20:14:32.238 [info] fatal: Not a valid object name HEAD
+2025-08-12 20:14:32.238 [warning] [GitFileSystemProvider][stat] File not found - git:/home/ubuntu/prestacao-contas-manual/index.html.git?%7B%22path%22%3A%22%2Fhome%2Fubuntu%2Fprestacao-contas-manual%2Findex.html%22%2C%22ref%22%3A%22HEAD%22%7D

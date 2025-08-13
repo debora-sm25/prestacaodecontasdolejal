@@ -1,0 +1,82 @@
+{"level":"info","ts":1753573126.017095,"caller":"cmd/pull.go:12","msg":"Pulling state from remote storage"}
+{"level":"info","ts":1753573126.0173585,"caller":"cmd/pull.go:16","msg":"Pull is not allowed, waiting for config change"}
+{"level":"warn","ts":1753573126.0188835,"caller":"utils/utils.go:23","msg":"Failed to fetch CDP WebSocket URL, will retry","error":"Get \"http://localhost:9222/json/version\": dial tcp [::1]:9222: connect: connection refused"}
+{"level":"warn","ts":1753573126.5203424,"caller":"utils/utils.go:23","msg":"Failed to fetch CDP WebSocket URL, will retry","error":"Get \"http://localhost:9222/json/version\": dial tcp [::1]:9222: connect: connection refused"}
+{"level":"warn","ts":1753573127.0216184,"caller":"utils/utils.go:23","msg":"Failed to fetch CDP WebSocket URL, will retry","error":"Get \"http://localhost:9222/json/version\": dial tcp [::1]:9222: connect: connection refused"}
+{"level":"warn","ts":1753573127.522742,"caller":"utils/utils.go:23","msg":"Failed to fetch CDP WebSocket URL, will retry","error":"Get \"http://localhost:9222/json/version\": dial tcp [::1]:9222: connect: connection refused"}
+{"level":"warn","ts":1753573128.0241213,"caller":"utils/utils.go:23","msg":"Failed to fetch CDP WebSocket URL, will retry","error":"Get \"http://localhost:9222/json/version\": dial tcp [::1]:9222: connect: connection refused"}
+{"level":"warn","ts":1753573128.5253525,"caller":"utils/utils.go:23","msg":"Failed to fetch CDP WebSocket URL, will retry","error":"Get \"http://localhost:9222/json/version\": dial tcp [::1]:9222: connect: connection refused"}
+{"level":"warn","ts":1753573129.0266504,"caller":"utils/utils.go:23","msg":"Failed to fetch CDP WebSocket URL, will retry","error":"Get \"http://localhost:9222/json/version\": dial tcp [::1]:9222: connect: connection refused"}
+{"level":"warn","ts":1753573129.538331,"caller":"utils/utils.go:23","msg":"Failed to fetch CDP WebSocket URL, will retry","error":"Get \"http://localhost:9222/json/version\": dial tcp [::1]:9222: connect: connection refused"}
+{"level":"warn","ts":1753573130.0395145,"caller":"utils/utils.go:23","msg":"Failed to fetch CDP WebSocket URL, will retry","error":"Get \"http://localhost:9222/json/version\": dial tcp [::1]:9222: connect: connection refused"}
+{"level":"info","ts":1753573131.277029,"caller":"watcher/cdp_watcher.go:99","msg":"Watching targets"}
+{"level":"info","ts":1753573131.3992198,"caller":"watcher/cdp_watcher.go:117","msg":"Initial target found","targetID":"23058DEBA36F3CB1DA30795904A1C272"}
+{"level":"info","ts":1753573131.3997104,"caller":"watcher/cdp_watcher.go:143","msg":"Target info changed","targetID":"23058DEBA36F3CB1DA30795904A1C272"}
+2025/07/26 19:38:51 ERROR: received DOM.documentUpdated when there's no top-level frame
+2025/07/26 19:38:51 ERROR: received DOM.documentUpdated when there's no top-level frame
+{"level":"info","ts":1753573133.408809,"caller":"cmd/run.go:71","msg":"Put is not allowed"}
+{"level":"info","ts":1753574327.848118,"caller":"watcher/cdp_watcher.go:143","msg":"Target info changed","targetID":"000B1C168C592464FDFAF76953CC5B45"}
+{"level":"info","ts":1753574374.7678478,"caller":"watcher/cdp_watcher.go:143","msg":"Target info changed","targetID":"000B1C168C592464FDFAF76953CC5B45"}
+{"level":"info","ts":1753574374.9586265,"caller":"watcher/cdp_watcher.go:143","msg":"Target info changed","targetID":"000B1C168C592464FDFAF76953CC5B45"}
+{"level":"info","ts":1753574374.9717758,"caller":"watcher/cdp_watcher.go:143","msg":"Target info changed","targetID":"000B1C168C592464FDFAF76953CC5B45"}
+2025/07/26 19:59:35 ERROR: received DOM.documentUpdated when there's no top-level frame
+2025/07/26 19:59:35 ERROR: received DOM.documentUpdated when there's no top-level frame
+{"level":"info","ts":1753574375.8878934,"caller":"cmd/run.go:71","msg":"Put is not allowed"}
+{"level":"info","ts":1753574377.4832914,"caller":"cmd/run.go:71","msg":"Put is not allowed"}
+{"level":"info","ts":1753574670.5672464,"caller":"watcher/cdp_watcher.go:143","msg":"Target info changed","targetID":"000B1C168C592464FDFAF76953CC5B45"}
+{"level":"info","ts":1753574670.7579494,"caller":"watcher/cdp_watcher.go:143","msg":"Target info changed","targetID":"000B1C168C592464FDFAF76953CC5B45"}
+{"level":"info","ts":1753574670.772434,"caller":"watcher/cdp_watcher.go:143","msg":"Target info changed","targetID":"000B1C168C592464FDFAF76953CC5B45"}
+2025/07/26 20:04:30 ERROR: received DOM.documentUpdated when there's no top-level frame
+2025/07/26 20:04:30 ERROR: received DOM.documentUpdated when there's no top-level frame
+{"level":"info","ts":1753574671.298198,"caller":"cmd/run.go:71","msg":"Put is not allowed"}
+{"level":"info","ts":1753574673.2504284,"caller":"cmd/run.go:71","msg":"Put is not allowed"}
+{"level":"info","ts":1753576951.5098011,"caller":"watcher/cdp_watcher.go:143","msg":"Target info changed","targetID":"000B1C168C592464FDFAF76953CC5B45"}
+{"level":"info","ts":1753576951.7158291,"caller":"watcher/cdp_watcher.go:143","msg":"Target info changed","targetID":"000B1C168C592464FDFAF76953CC5B45"}
+{"level":"info","ts":1753576951.7312958,"caller":"watcher/cdp_watcher.go:143","msg":"Target info changed","targetID":"000B1C168C592464FDFAF76953CC5B45"}
+2025/07/26 20:42:31 ERROR: received DOM.documentUpdated when there's no top-level frame
+2025/07/26 20:42:31 ERROR: received DOM.documentUpdated when there's no top-level frame
+2025/07/26 20:42:31 ERROR: received DOM.documentUpdated when there's no top-level frame
+{"level":"info","ts":1753576952.9489152,"caller":"cmd/run.go:71","msg":"Put is not allowed"}
+{"level":"info","ts":1753576954.179907,"caller":"cmd/run.go:71","msg":"Put is not allowed"}
+{"level":"info","ts":1753577209.4901621,"caller":"watcher/cdp_watcher.go:143","msg":"Target info changed","targetID":"000B1C168C592464FDFAF76953CC5B45"}
+{"level":"info","ts":1753577209.7158616,"caller":"watcher/cdp_watcher.go:143","msg":"Target info changed","targetID":"000B1C168C592464FDFAF76953CC5B45"}
+{"level":"info","ts":1753577209.7300363,"caller":"watcher/cdp_watcher.go:143","msg":"Target info changed","targetID":"000B1C168C592464FDFAF76953CC5B45"}
+2025/07/26 20:46:49 ERROR: received DOM.documentUpdated when there's no top-level frame
+2025/07/26 20:46:49 ERROR: received DOM.documentUpdated when there's no top-level frame
+2025/07/26 20:46:49 ERROR: received DOM.documentUpdated when there's no top-level frame
+{"level":"info","ts":1753577210.308507,"caller":"cmd/run.go:71","msg":"Put is not allowed"}
+{"level":"info","ts":1753577212.1768486,"caller":"cmd/run.go:71","msg":"Put is not allowed"}
+{"level":"info","ts":1753577216.3171756,"caller":"cmd/run.go:71","msg":"Put is not allowed"}
+{"level":"info","ts":1753577216.4860516,"caller":"cmd/run.go:71","msg":"Put is not allowed"}
+{"level":"info","ts":1753577217.4900084,"caller":"cmd/run.go:71","msg":"Put is not allowed"}
+{"level":"info","ts":1753577422.860704,"caller":"watcher/cdp_watcher.go:143","msg":"Target info changed","targetID":"000B1C168C592464FDFAF76953CC5B45"}
+{"level":"info","ts":1753577423.1011524,"caller":"watcher/cdp_watcher.go:143","msg":"Target info changed","targetID":"000B1C168C592464FDFAF76953CC5B45"}
+{"level":"info","ts":1753577423.1160903,"caller":"watcher/cdp_watcher.go:143","msg":"Target info changed","targetID":"000B1C168C592464FDFAF76953CC5B45"}
+{"level":"info","ts":1753577423.6045713,"caller":"cmd/run.go:71","msg":"Put is not allowed"}
+{"level":"info","ts":1753577424.5809422,"caller":"cmd/run.go:71","msg":"Put is not allowed"}
+{"level":"info","ts":1753577425.6503794,"caller":"cmd/run.go:71","msg":"Put is not allowed"}
+{"level":"info","ts":1753577431.6586707,"caller":"cmd/run.go:71","msg":"Put is not allowed"}
+{"level":"info","ts":1753577431.8025885,"caller":"cmd/run.go:71","msg":"Put is not allowed"}
+{"level":"info","ts":1753577432.8055074,"caller":"cmd/run.go:71","msg":"Put is not allowed"}
+{"level":"info","ts":1753577663.578618,"caller":"watcher/cdp_watcher.go:143","msg":"Target info changed","targetID":"000B1C168C592464FDFAF76953CC5B45"}
+{"level":"info","ts":1753577663.782212,"caller":"watcher/cdp_watcher.go:143","msg":"Target info changed","targetID":"000B1C168C592464FDFAF76953CC5B45"}
+{"level":"info","ts":1753577663.7971737,"caller":"watcher/cdp_watcher.go:143","msg":"Target info changed","targetID":"000B1C168C592464FDFAF76953CC5B45"}
+2025/07/26 20:54:23 ERROR: received DOM.documentUpdated when there's no top-level frame
+2025/07/26 20:54:23 ERROR: received DOM.documentUpdated when there's no top-level frame
+2025/07/26 20:54:23 ERROR: received DOM.documentUpdated when there's no top-level frame
+{"level":"info","ts":1753577665.0836105,"caller":"cmd/run.go:71","msg":"Put is not allowed"}
+{"level":"info","ts":1753577666.3088117,"caller":"cmd/run.go:71","msg":"Put is not allowed"}
+{"level":"info","ts":1753577673.0951085,"caller":"cmd/run.go:71","msg":"Put is not allowed"}
+{"level":"info","ts":1753577673.3331401,"caller":"cmd/run.go:71","msg":"Put is not allowed"}
+{"level":"info","ts":1753577674.3368013,"caller":"cmd/run.go:71","msg":"Put is not allowed"}
+{"level":"info","ts":1753577905.909594,"caller":"watcher/cdp_watcher.go:143","msg":"Target info changed","targetID":"000B1C168C592464FDFAF76953CC5B45"}
+{"level":"info","ts":1753577906.2279818,"caller":"watcher/cdp_watcher.go:143","msg":"Target info changed","targetID":"000B1C168C592464FDFAF76953CC5B45"}
+{"level":"info","ts":1753577906.2431712,"caller":"watcher/cdp_watcher.go:143","msg":"Target info changed","targetID":"000B1C168C592464FDFAF76953CC5B45"}
+{"level":"info","ts":1753577907.4586153,"caller":"cmd/run.go:71","msg":"Put is not allowed"}
+{"level":"info","ts":1753577907.7194383,"caller":"cmd/run.go:71","msg":"Put is not allowed"}
+{"level":"info","ts":1753577908.7955196,"caller":"cmd/run.go:71","msg":"Put is not allowed"}
+{"level":"info","ts":1753577915.468957,"caller":"cmd/run.go:71","msg":"Put is not allowed"}
+{"level":"info","ts":1753577916.3404965,"caller":"cmd/run.go:71","msg":"Put is not allowed"}
+{"level":"info","ts":1753577917.343882,"caller":"cmd/run.go:71","msg":"Put is not allowed"}
+{"level":"info","ts":1754770380.8396025,"caller":"cmd/run.go:71","msg":"Put is not allowed"}
+{"level":"info","ts":1754770382.0708122,"caller":"cmd/run.go:71","msg":"Put is not allowed"}

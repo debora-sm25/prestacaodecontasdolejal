@@ -1,0 +1,77 @@
+Manual de Execução da Prestação de Contas
+Este manual detalha o passo a passo para a elaboração da prestação de contas aos clientes, utilizando as informações disponíveis no Eproc.
+1. Abertura e Preenchimento Inicial do Modelo
+1.1. Abertura do Modelo
+Abra o modelo de prestação de contas.
+
+1.2. Preenchimento dos Dados do Cliente
+Preencha o nome completo do cliente.
+
+1.3. Inserção dos Números dos Processos
+Insira o número do processo de cumprimento de sentença e o número do processo de conhecimento.
+
+Exemplo de onde localizar os números dos processos no Eproc:
+
+Exemplo de localização dos números dos processos
+2. Obtenção das Chaves de Acesso
+Para obter as chaves de acesso:
+
+2.1. Chave do Processo de Cumprimento de Sentença
+No Eproc, vá em 'Informações Adicionais' e clique na chave do processo de cumprimento de sentença.
+
+Chave de Acesso 1
+2.2. Chave do Processo de Conhecimento
+Repita o processo para o processo de origem (conhecimento), clicando no processo relacionado e obtendo sua chave.
+
+Chave de Acesso 2
+3. Consulta e Verificação de Documentos
+O modelo de prestação de contas já indica o site oficial para consulta:
+
+https://www.tjrs.jus.br/novo/busca/?return=proc&client=wp_index
+4. Identificação de Valores
+4.1. Valor Cobrado (Cálculo do Evento 1)
+O valor cobrado geralmente pode ser encontrado no 'resumo do cálculo' do evento 1. Recomenda-se tirar um print dessa tela para documentação.
+
+Resumo do Cálculo
+4.2. Custas do Cumprimento de Sentença
+Verifique se há custas adicionais do cumprimento de sentença e indique o valor extra, se aplicável.
+
+4.3. Valor Total Provisório Depositado pela Laghetto
+Este valor pode ser encontrado na aba 'Depósitos Judiciais' no Eproc ou no comprovante de depósito. Observe as datas dos depósitos, pois pode haver depósitos complementares.
+
+Depósitos Judiciais 1
+Depósitos Judiciais 2
+5. Detalhamento dos Descontos
+Indique os valores que foram abatidos do total provisório depositado:
+
+5.1. Honorários Contratuais
+Percentual: Verifique o percentual no contrato, que geralmente está anexado ao evento do alvará.
+Honorários Contratuais 1
+Base de Cálculo: A quantia é calculada apenas sobre o crédito do cliente, excluindo custas e sucumbência.
+Verificação: Consulte petições anteriores, pois o cálculo pode já ter sido realizado.
+Honorários Contratuais 2
+5.2. Honorários de Sucumbência
+Indique o valor dos honorários de sucumbência.
+
+5.3. Reembolso de Custas
+Inclua o reembolso de custas de apelação, agravo ou iniciais, caso tenham sido pagas pelo escritório.
+
+5.4. Honorários de Cálculos do Processo
+Indique o valor dos honorários de cálculos do Processo.
+
+6. Cálculo do Valor Líquido de Repasse
+Após informar todos os descontos, calcule e indique o valor líquido a ser repassado ao cliente.
+
+7. Taxa de Transferência
+Informe o valor da taxa de transferência: R$8,00
+
+8. Status Técnico dos Processos
+Descreva o status técnico atual dos processos. Exemplos de status:
+
+aguarda julgamento dos embargos de declaração e prazo para interpor recurso especial
+aguarda julgamento do recurso especial interposto pelo réu
+aguarda prazo para interpor recurso especial
+aguarda ser pago mais alguma quantia da condenação
+aguarda complemento de custas do cumprimento de sentença
+9. Observações Adicionais
+Adicione observações informais para explicar o status técnico do processo de forma clara ao cliente, como a expectativa de recursos ou reembolsos de valores.

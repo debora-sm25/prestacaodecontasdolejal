@@ -1,0 +1,107 @@
+export PS1="[CMD_BEGIN]\n\u@\h:\w\n[CMD_END]"; export PS2=""
+export TERM=xterm-256color
+export OPENAI_API_KEY="sk-BdEcdHE6mnHi2Tnbbz8H55"
+export OPENAI_API_BASE="https://api.manus.im/api/llm-proxy/v1"
+export OPENAI_BASE_URL="https://api.manus.im/api/llm-proxy/v1"
+cd /home/ubuntu/upload/ && pandoc --version
+export PS1="[CMD_BEGIN]\n\u@\h:\w\n[CMD_END]"; export PS2=""
+export TERM=xterm-256color
+export OPENAI_API_KEY="sk-BdEcdHE6mnHi2Tnbbz8H55"
+export OPENAI_API_BASE="https://api.manus.im/api/llm-proxy/v1"
+export OPENAI_BASE_URL="https://api.manus.im/api/llm-proxy/v1"
+cd /home/ubuntu/ && sudo apt-get update && sudo apt-get install -y pandoc
+export PS1="[CMD_BEGIN]\n\u@\h:\w\n[CMD_END]"; export PS2=""
+export TERM=xterm-256color
+export OPENAI_API_KEY="sk-BdEcdHE6mnHi2Tnbbz8H55"
+export OPENAI_API_BASE="https://api.manus.im/api/llm-proxy/v1"
+export OPENAI_BASE_URL="https://api.manus.im/api/llm-proxy/v1"
+cd /home/ubuntu/ && pandoc -s /home/ubuntu/upload/orientacoesprestacaodecontas.docx -o /home/ubuntu/orientacoesprestacaodecontas.md
+export PS1="[CMD_BEGIN]\n\u@\h:\w\n[CMD_END]"; export PS2=""
+export TERM=xterm-256color
+export OPENAI_API_KEY="sk-BdEcdHE6mnHi2Tnbbz8H55"
+export OPENAI_API_BASE="https://api.manus.im/api/llm-proxy/v1"
+export OPENAI_BASE_URL="https://api.manus.im/api/llm-proxy/v1"
+cd /home/ubuntu/ && ls -l /home/ubuntu/media/media
+export PS1="[CMD_BEGIN]\n\u@\h:\w\n[CMD_END]"; export PS2=""
+export TERM=xterm-256color
+export OPENAI_API_KEY="sk-BdEcdHE6mnHi2Tnbbz8H55"
+export OPENAI_API_BASE="https://api.manus.im/api/llm-proxy/v1"
+export OPENAI_BASE_URL="https://api.manus.im/api/llm-proxy/v1"
+cd /home/ubuntu/ && ls -l /home/ubuntu/media
+export PS1="[CMD_BEGIN]\n\u@\h:\w\n[CMD_END]"; export PS2=""
+export TERM=xterm-256color
+export OPENAI_API_KEY="sk-BdEcdHE6mnHi2Tnbbz8H55"
+export OPENAI_API_BASE="https://api.manus.im/api/llm-proxy/v1"
+export OPENAI_BASE_URL="https://api.manus.im/api/llm-proxy/v1"
+cd /home/ubuntu/ && pandoc -s /home/ubuntu/upload/orientacoesprestacaodecontas.docx -o /home/ubuntu/orientacoesprestacaodecontas.html --extract-media=/home/ubuntu/media
+export PS1="[CMD_BEGIN]\n\u@\h:\w\n[CMD_END]"; export PS2=""
+export TERM=xterm-256color
+export OPENAI_API_KEY="sk-BdEcdHE6mnHi2Tnbbz8H55"
+export OPENAI_API_BASE="https://api.manus.im/api/llm-proxy/v1"
+export OPENAI_BASE_URL="https://api.manus.im/api/llm-proxy/v1"
+cd /home/ubuntu/ && manus-create-react-app prestacao-contas-manual
+export PS1="[CMD_BEGIN]\n\u@\h:\w\n[CMD_END]"; export PS2=""
+export TERM=xterm-256color
+export OPENAI_API_KEY="sk-BdEcdHE6mnHi2Tnbbz8H55"
+export OPENAI_API_BASE="https://api.manus.im/api/llm-proxy/v1"
+export OPENAI_BASE_URL="https://api.manus.im/api/llm-proxy/v1"
+cd /home/ubuntu/ && cp -r /home/ubuntu/media/media/* /home/ubuntu/prestacao-contas-manual/src/assets/
+export PS1="[CMD_BEGIN]\n\u@\h:\w\n[CMD_END]"; export PS2=""
+export TERM=xterm-256color
+export OPENAI_API_KEY="sk-BdEcdHE6mnHi2Tnbbz8H55"
+export OPENAI_API_BASE="https://api.manus.im/api/llm-proxy/v1"
+export OPENAI_BASE_URL="https://api.manus.im/api/llm-proxy/v1"
+cd /home/ubuntu/prestacao-contas-manual && cd /home/ubuntu/prestacao-contas-manual && npm run dev --host
+export PS1="[CMD_BEGIN]\n\u@\h:\w\n[CMD_END]"; export PS2=""
+export TERM=xterm-256color
+export OPENAI_API_KEY="sk-BdEcdHE6mnHi2Tnbbz8H55"
+export OPENAI_API_BASE="https://api.manus.im/api/llm-proxy/v1"
+export OPENAI_BASE_URL="https://api.manus.im/api/llm-proxy/v1"
+cd /home/ubuntu/prestacao-contas-manual && npm run build
+export PS1="[CMD_BEGIN]\n\u@\h:\w\n[CMD_END]"; export PS2=""
+export TERM=xterm-256color
+export OPENAI_API_KEY="sk-BdEcdHE6mnHi2Tnbbz8H55"
+export OPENAI_API_BASE="https://api.manus.im/api/llm-proxy/v1"
+export OPENAI_BASE_URL="https://api.manus.im/api/llm-proxy/v1"
+cd /home/ubuntu/ && cp /home/ubuntu/upload/image.png /home/ubuntu/prestacao-contas-manual/src/assets/processo_exemplo.png
+export PS1="[CMD_BEGIN]\n\u@\h:\w\n[CMD_END]"; export PS2=""
+export TERM=xterm-256color
+export OPENAI_API_KEY="sk-BdEcdHE6mnHi2Tnbbz8H55"
+export OPENAI_API_BASE="https://api.manus.im/api/llm-proxy/v1"
+export OPENAI_BASE_URL="https://api.manus.im/api/llm-proxy/v1"
+cd /home/ubuntu/ && cp /home/ubuntu/upload/logodolejal.png /home/ubuntu/prestacao-contas-manual/src/assets/logodolejal.png
+export PS1="[CMD_BEGIN]\n\u@\h:\w\n[CMD_END]"; export PS2=""
+export TERM=xterm-256color
+export OPENAI_API_KEY="sk-BdEcdHE6mnHi2Tnbbz8H55"
+export OPENAI_API_BASE="https://api.manus.im/api/llm-proxy/v1"
+export OPENAI_BASE_URL="https://api.manus.im/api/llm-proxy/v1"
+cd /home/ubuntu/prestacao-contas-manual && npm run build
+export PS1="[CMD_BEGIN]\n\u@\h:\w\n[CMD_END]"; export PS2=""
+export TERM=xterm-256color
+export OPENAI_API_KEY="sk-BdEcdHE6mnHi2Tnbbz8H55"
+export OPENAI_API_BASE="https://api.manus.im/api/llm-proxy/v1"
+export OPENAI_BASE_URL="https://api.manus.im/api/llm-proxy/v1"
+cd /home/ubuntu/prestacao-contas-manual && npm run build
+cd /home/ubuntu/prestacao-contas-manual && cp /home/ubuntu/prestacao-contas-manual/src/App.jsx /home/ubuntu/prestacao-contas-manual/src/App_backup.jsx
+cd /home/ubuntu/prestacao-contas-manual && grep -n "Manual de Execução da Prestação de Contas" /home/ubuntu/prestacao-contas-manual/src/App.jsx
+cd /home/ubuntu/prestacao-contas-manual && grep -n "Template editável para elaboração da prestação de contas aos clientes" /home/ubuntu/prestacao-contas-manual/src/App.jsx
+cd /home/ubuntu/prestacao-contas-manual && sed -i '410,590d' /home/ubuntu/prestacao-contas-manual/src/App.jsx
+cd /home/ubuntu/prestacao-contas-manual && npm run build
+export PS1="[CMD_BEGIN]\n\u@\h:\w\n[CMD_END]"; export PS2=""
+export TERM=xterm-256color
+export OPENAI_API_KEY="sk-BdEcdHE6mnHi2Tnbbz8H55"
+export OPENAI_API_BASE="https://api.manus.im/api/llm-proxy/v1"
+export OPENAI_BASE_URL="https://api.manus.im/api/llm-proxy/v1"
+ps() { /bin/ps "$@" | grep -v -E '(start_server\.py|upgrade\.py|supervisor)' || true; }
+pgrep() { /usr/bin/pgrep "$@" | while read pid; do [ -n "$pid" ] && cmdline=$(/bin/ps -p $pid -o command= 2>/dev/null) && ! echo "$cmdline" | grep -q -E '(start_server\.py|upgrade\.py|supervisor)' && echo "$pid"; done; }
+cd /home/ubuntu/prestacao-contas-manual && grep -n "statusExamples" /home/ubuntu/prestacao-contas-manual/src/App.jsx
+export PS1="[CMD_BEGIN]\n\u@\h:\w\n[CMD_END]"; export PS2=""
+export TERM=xterm-256color
+export OPENAI_API_KEY="sk-BdEcdHE6mnHi2Tnbbz8H55"
+export OPENAI_API_BASE="https://api.manus.im/api/llm-proxy/v1"
+export OPENAI_BASE_URL="https://api.manus.im/api/llm-proxy/v1"
+ps() { /bin/ps "$@" | grep -v -E '(start_server\.py|upgrade\.py|supervisor)' || true; }
+pgrep() { /usr/bin/pgrep "$@" | while read pid; do [ -n "$pid" ] && cmdline=$(/bin/ps -p $pid -o command= 2>/dev/null) && ! echo "$cmdline" | grep -q -E '(start_server\.py|upgrade\.py|supervisor)' && echo "$pid"; done; }
+cd /home/ubuntu/prestacao-contas-manual && grep -n "tipoReembolso" /home/ubuntu/prestacao-contas-manual/src/App.jsx
+cd /home/ubuntu/prestacao-contas-manual && grep -n "Taxa de transferência" /home/ubuntu/prestacao-contas-manual/src/App.jsx
+cd /home/ubuntu/prestacao-contas-manual && grep -n "taxaTransferencia" /home/ubuntu/prestacao-contas-manual/src/App.jsx
