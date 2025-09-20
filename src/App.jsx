@@ -50,8 +50,8 @@ function App() {
     observacoes: ''
   })
 
-  const [uploadedFile, setUploadedFile] = useState(null)
-  const [pastedImage, setPastedImage] = useState(null)
+  const [uploadedFiles, setUploadedFiles] = useState([])
+  const [pastedImages, setPastedImages] = useState([])
 
   // Função para formatar valores monetários
   const formatCurrency = (value) => {
@@ -93,7 +93,7 @@ function App() {
       requiredFields.push('outroStatus')
     }
     
-    const hasImage = uploadedFile || pastedImage
+    const hasImage = uploadedFiles.length > 0 || pastedImages.length > 0
     const hasAnsweredHonorarios = formData.incluirHonorariosCalculo !== null
     const hasAnsweredReembolso = formData.incluirReembolso !== null
     
@@ -134,7 +134,7 @@ function App() {
     }
     
     const filledFields = requiredFields.filter(field => formData[field]?.trim()).length
-    const hasImage = uploadedFile || pastedImage ? 1 : 0
+    const hasImage = uploadedFiles.length > 0 || pastedImages.length > 0 ? 1 : 0
     const hasAnsweredHonorarios = formData.incluirHonorariosCalculo !== null ? 1 : 0
     const hasAnsweredReembolso = formData.incluirReembolso !== null ? 1 : 0
     const totalFields = requiredFields.length + 3 // +1 para a imagem, +1 para honorários, +1 para reembolso
@@ -166,8 +166,8 @@ function App() {
       taxaTransferencia: '8,00',
       observacoes: ''
     })
-    setUploadedFile(null)
-    setPastedImage(null)
+    setUploadedFiles([])
+    setPastedImages([])
   }
 
   // Função para calcular valores automaticamente
@@ -188,8 +188,10 @@ function App() {
     }
 
     // Calcular honorários de cálculo (1%) - apenas se incluirHonorariosCalculo for true
-    if (valorPrincipal && newData.incluirHonorariosCalculo) {
-      const honorariosCalculo = (valorPrincipal * 1 / 100)
+    // Agora incide sobre o valor depositado pelo réu
+    const valorDepositadoCalc = parseFloat(newData.valorDepositado?.replace(/[^\d,]/g, '').replace(',', '.')) || 0
+    if (valorDepositadoCalc && newData.incluirHonorariosCalculo) {
+      const honorariosCalculo = (valorDepositadoCalc * 1 / 100)
       newData.honorariosCalculo = honorariosCalculo.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
     } else if (!newData.incluirHonorariosCalculo) {
       newData.honorariosCalculo = ''
@@ -247,9 +249,29 @@ function App() {
   }
 
   const handleFileUpload = (event) => {
-    const file = event.target.files[0]
-    if (file) {
-      setUploadedFile(file)
+    const files = Array.from(event.target.files)
+    if (files.length > 0) {
+      files.forEach(file => {
+        // Ler o conteúdo do arquivo
+        const reader = new FileReader()
+        reader.onload = (e) => {
+          const fileData = {
+            file: file,
+            content: e.target.result,
+            id: Date.now() + Math.random()
+          }
+          setUploadedFiles(prev => [...prev, fileData])
+        }
+        
+        if (file.type.startsWith('image/')) {
+          reader.readAsDataURL(file)
+        } else if (file.type === 'application/pdf') {
+          reader.readAsDataURL(file)
+        } else {
+          // Para outros tipos de arquivo, tentar ler como texto
+          reader.readAsText(file)
+        }
+      })
     }
   }
 
@@ -260,7 +282,11 @@ function App() {
         const blob = items[i].getAsFile()
         const reader = new FileReader()
         reader.onload = (e) => {
-          setPastedImage(e.target.result)
+          const imageData = {
+            content: e.target.result,
+            id: Date.now() + Math.random()
+          }
+          setPastedImages(prev => [...prev, imageData])
         }
         reader.readAsDataURL(blob)
         break
@@ -285,9 +311,111 @@ function App() {
       alert(message)
       return
     }
+      
+      // Obter o conteúdo do preview
+      const printContent = document.getElementById('prestacao-preview')
+    const logoDolejal = document.querySelector('.logo img')?.src || ''
     
-    // Obter o conteúdo do preview
-    const printContent = document.getElementById('prestacao-preview')
+    // Função para gerar páginas de anexos
+    const generateAnexosPages = () => {
+      if (uploadedFiles.length === 0 && pastedImages.length === 0) return ''
+      
+      const anexos = []
+      
+      // Processar imagens coladas
+      pastedImages.forEach((imageData, index) => {
+        anexos.push(`
+          <div style="page-break-before: always; padding: 1cm;">
+            <div style="text-align: center; margin-bottom: 0.5cm;">
+              <h2 style="font-family: 'Times New Roman', Times, serif; font-size: 14pt; font-weight: bold; margin-bottom: 0.3cm;">
+                ANEXO - PRINTS DOS CÁLCULOS DO PROCESSO ${pastedImages.length > 1 ? `(${index + 1})` : ''}
+              </h2>
+              <p style="font-family: 'Times New Roman', Times, serif; font-size: 10pt; margin-bottom: 0.2cm;">
+                Cliente: ${formData.nomeCliente || '[NOME DO CLIENTE]'}
+              </p>
+              <p style="font-family: 'Times New Roman', Times, serif; font-size: 10pt; margin-bottom: 0.5cm;">
+                Processos: ${formData.processos || '[NÚMEROS DOS PROCESSOS]'}
+              </p>
+            </div>
+            <div style="text-align: center; margin-bottom: 0.5cm;">
+              <img src="${imageData.content}" alt="Print dos cálculos" style="max-width: 100%; height: auto; max-height: 18cm; border: 1px solid #ccc;" />
+            </div>
+            <div style="text-align: center; font-family: 'Times New Roman', Times, serif; font-size: 8pt; color: #666;">
+              <div>Dolejal Advocacia Especializada - CNPJ 36.515.414/0001-09 - OAB: RS 9.794</div>
+              <div>Rua Visconde De Pelotas 21, sala 402, Passo da Areia - Porto Alegre - RS - CEP 91030-530</div>
+            </div>
+          </div>
+        `)
+      })
+      
+      // Processar arquivos enviados
+      uploadedFiles.forEach((fileData, index) => {
+        let fileContent = ''
+        
+        if (fileData.content) {
+          if (fileData.file.type.startsWith('image/')) {
+            // Para imagens, exibir a imagem
+            fileContent = `
+              <div style="text-align: center; margin: 0.5cm 0;">
+                <img src="${fileData.content}" alt="${fileData.file.name}" style="max-width: 100%; height: auto; max-height: 18cm; border: 1px solid #ccc;" />
+              </div>
+            `
+          } else if (fileData.file.type === 'application/pdf') {
+            // Para PDFs, exibir como iframe
+            fileContent = `
+              <div style="text-align: center; margin: 0.5cm 0;">
+                <iframe src="${fileData.content}" style="width: 100%; height: 18cm; border: 1px solid #ccc;" frameborder="0"></iframe>
+              </div>
+            `
+          } else {
+            // Para outros arquivos, exibir como texto
+            fileContent = `
+              <div style="text-align: left; margin: 0.5cm 0; padding: 0.5cm; border: 1px solid #ccc; background-color: #f9f9f9; font-family: 'Courier New', monospace; font-size: 9pt; white-space: pre-wrap; max-height: 18cm; overflow-y: auto;">
+                ${fileData.content}
+              </div>
+            `
+          }
+        } else {
+          // Fallback se não conseguir ler o conteúdo
+          fileContent = `
+            <div style="text-align: center; padding: 1cm; border: 2px dashed #ccc; background-color: #f9f9f9;">
+              <p style="font-family: 'Times New Roman', Times, serif; font-size: 12pt; font-weight: bold; margin-bottom: 0.5cm;">
+                📎 ${fileData.file.name}
+              </p>
+              <p style="font-family: 'Times New Roman', Times, serif; font-size: 10pt; color: #666;">
+                Arquivo anexado: ${fileData.file.name}
+              </p>
+              <p style="font-family: 'Times New Roman', Times, serif; font-size: 8pt; color: #999; margin-top: 0.5cm;">
+                *Este arquivo foi enviado como anexo e deve ser consultado separadamente
+              </p>
+            </div>
+          `
+        }
+        
+        anexos.push(`
+          <div style="page-break-before: always; padding: 1cm;">
+            <div style="text-align: center; margin-bottom: 0.5cm;">
+              <h2 style="font-family: 'Times New Roman', Times, serif; font-size: 14pt; font-weight: bold; margin-bottom: 0.3cm;">
+                ANEXO - DOCUMENTOS DO PROCESSO ${uploadedFiles.length > 1 ? `(${index + 1})` : ''}
+              </h2>
+              <p style="font-family: 'Times New Roman', Times, serif; font-size: 10pt; margin-bottom: 0.2cm;">
+                Cliente: ${formData.nomeCliente || '[NOME DO CLIENTE]'}
+              </p>
+              <p style="font-family: 'Times New Roman', Times, serif; font-size: 10pt; margin-bottom: 0.5cm;">
+                Processos: ${formData.processos || '[NÚMEROS DOS PROCESSOS]'}
+              </p>
+            </div>
+            ${fileContent}
+            <div style="text-align: center; font-family: 'Times New Roman', Times, serif; font-size: 8pt; color: #666;">
+              <div>Dolejal Advocacia Especializada - CNPJ 36.515.414/0001-09 - OAB: RS 9.794</div>
+              <div>Rua Visconde De Pelotas 21, sala 402, Passo da Areia - Porto Alegre - RS - CEP 91030-530</div>
+            </div>
+          </div>
+        `)
+      })
+      
+      return anexos.join('')
+    }
     
     // Criar o HTML completo
     const today = new Date()
@@ -315,25 +443,6 @@ function App() {
         }
         p {
             margin-bottom: 0.2cm;
-        }
-        .anexo {
-            margin-bottom: 0.3cm;
-            padding: 0.3cm;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            page-break-inside: avoid;
-        }
-        .anexo p {
-            font-weight: bold;
-            margin-bottom: 0.1cm;
-        }
-        .anexo img {
-            max-width: 100%;
-            height: auto;
-            min-height: 200px;
-            image-rendering: -webkit-optimize-contrast;
-            image-rendering: crisp-edges;
-            image-rendering: pixelated;
         }
         .descontos {
             margin-bottom: 0.2cm;
@@ -367,13 +476,6 @@ function App() {
             p {
                 margin-bottom: 0.2cm !important;
             }
-            .anexo {
-                margin-bottom: 0.3cm !important;
-                padding: 0.3cm !important;
-            }
-            .anexo img {
-                min-height: 200px !important;
-            }
         }
     </style>
 </head>
@@ -385,15 +487,16 @@ function App() {
     </div>
     ${printContent.innerHTML.replace(/<div class="header"[^>]*>.*?<\/div>/s, '')}
     <div style="margin-top: 2cm; page-break-inside: avoid;">
-      <div style="text-align: right; font-family: 'Times New Roman', Times, serif; font-size: 11pt;">
+      <div style="text-align: left; font-family: 'Times New Roman', Times, serif; font-size: 11pt; line-height: 1.4; margin-left: 0;">
         <div>Dolejal Advocacia Especializada</div>
-        <div>Porto Alegre/RS, ${formattedDate}.</div>
+        <div style="margin-top: 0.3cm;">Porto Alegre/RS, ${formattedDate}.</div>
       </div>
       <div style="text-align: center; margin-top: 1.2cm; font-family: 'Times New Roman', Times, serif; font-size: 9pt; color: #000;">
         <div>Dolejal Advocacia Especializada - CNPJ 36.515.414/0001-09 - OAB: RS 9.794</div>
         <div>Rua Visconde De Pelotas 21, sala 402, Passo da Areia - Porto Alegre - RS - CEP 91030-530</div>
       </div>
     </div>
+    ${generateAnexosPages()}
 </body>
 </html>`
     
@@ -794,15 +897,19 @@ function App() {
                       style={{ outline: 'none' }}
                     >
                       <div className="text-center">
-                        {pastedImage ? (
+                        {pastedImages.length > 0 ? (
                           <div className="space-y-4">
-                            <img src={pastedImage} alt="Imagem colada" className="max-w-full max-h-64 mx-auto rounded" />
+                            {pastedImages.map((imageData, index) => (
+                              <div key={imageData.id} className="relative">
+                                <img src={imageData.content} alt={`Imagem colada ${index + 1}`} className="max-w-full max-h-64 mx-auto rounded" />
                             <button 
-                              onClick={() => setPastedImage(null)}
-                              className="text-red-600 hover:text-red-800 text-sm"
+                                  onClick={() => setPastedImages(prev => prev.filter(img => img.id !== imageData.id))}
+                                  className="absolute top-2 right-2 bg-red-600 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs hover:bg-red-800"
                             >
-                              Remover imagem
+                                  ×
                             </button>
+                              </div>
+                            ))}
                           </div>
                         ) : (
                           <>
@@ -818,6 +925,7 @@ function App() {
                                   type="file" 
                                   className="sr-only" 
                                   accept="image/*,.pdf"
+                                  multiple
                                   onChange={handleFileUpload}
                                 />
                               </label>
@@ -827,9 +935,37 @@ function App() {
                             <p className="text-xs leading-5 text-blue-600 font-medium">
                               💡 Dica: Você também pode colar uma imagem aqui usando Ctrl+V
                             </p>
-                            {uploadedFile && (
+                            {uploadedFiles.length > 0 && (
                               <div className="mt-2 text-sm text-green-600">
-                                Arquivo selecionado: {uploadedFile.name}
+                                <div className="mb-2">Arquivos selecionados ({uploadedFiles.length}):</div>
+                                {uploadedFiles.map((fileData, index) => (
+                                  <div key={fileData.id} className="relative mb-2 p-2 bg-green-50 rounded border">
+                                    <div className="flex items-center justify-between">
+                                      <div className="flex-1">
+                                        <div className="text-xs font-medium">{fileData.file.name}</div>
+                                        {fileData.file.type.startsWith('image/') && (
+                                          <img src={fileData.content} alt="Preview" className="max-w-full max-h-16 mx-auto rounded border mt-1" />
+                                        )}
+                                        {fileData.file.type === 'application/pdf' && (
+                                          <div className="text-xs text-gray-600 mt-1">
+                                            📄 PDF carregado - será exibido no PDF final
+                                    </div>
+                                        )}
+                                        {!fileData.file.type.startsWith('image/') && fileData.file.type !== 'application/pdf' && (
+                                          <div className="text-xs text-gray-600 mt-1">
+                                            📄 Arquivo carregado - será exibido no PDF final
+                                  </div>
+                                        )}
+                                    </div>
+                                    <button
+                                        onClick={() => setUploadedFiles(prev => prev.filter(file => file.id !== fileData.id))}
+                                        className="ml-2 bg-red-600 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs hover:bg-red-800"
+                                      >
+                                        ×
+                                    </button>
+                                    </div>
+                                  </div>
+                                ))}
                               </div>
                             )}
                           </>
@@ -965,33 +1101,6 @@ function App() {
                           <strong>Valor total da condenação provisória, incluindo honorários de sucumbência e contratual:</strong>
                         </p>
                         
-                        {(uploadedFile || pastedImage) && (
-                          <div style={{ 
-                            marginBottom: '0.4cm',
-                            padding: '0.5cm',
-                            border: '1px solid #ccc',
-                            borderRadius: '4px'
-                          }}>
-                            <p style={{ 
-                              fontFamily: '"Times New Roman", Times, serif',
-                              fontSize: '12pt',
-                              fontWeight: 'bold',
-                              marginBottom: '0.2cm'
-                            }}>
-                              📎 Anexo - Prints dos Cálculos:
-                            </p>
-                            {pastedImage ? (
-                              <img src={pastedImage} alt="Print dos cálculos" style={{ maxWidth: '60%', height: 'auto', maxHeight: '7.2cm', display: 'block', margin: '0 auto', objectFit: 'contain' }} />
-                            ) : (
-                              <p style={{ 
-                                fontFamily: '"Times New Roman", Times, serif',
-                                fontSize: '12pt'
-                              }}>
-                                {uploadedFile.name}
-                              </p>
-                            )}
-                          </div>
-                        )}
                         
                         <p style={{ 
                           marginBottom: '0.4cm',
@@ -1049,7 +1158,7 @@ function App() {
                                 fontFamily: '"Times New Roman", Times, serif',
                                 fontSize: '12pt'
                               }}>
-                                {calculoIndex}. Honorários de cálculo do processo (1%): {formData.honorariosCalculo ? `R$ ${formData.honorariosCalculo}` : 'R$[VALOR DOS HONORÁRIOS DE CÁLCULO]'}
+                                {calculoIndex}. Honorários de cálculo do processo (1% sobre valor depositado): {formData.honorariosCalculo ? `R$ ${formData.honorariosCalculo}` : 'R$[VALOR DOS HONORÁRIOS DE CÁLCULO]'}
                               </p>
                             )}
                           </div>
