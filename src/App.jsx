@@ -40,10 +40,24 @@ function App() {
     honorariosSucumbencia: '',
     incluirReembolso: null, // null = não respondido, true = sim, false = não
     outroStatus: '',
-    tipoReembolso: '',
-    reembolsoCustas: '',
+    custasJudiciais: [], // Array de custas judiciais
     incluirHonorariosCalculo: null, // null = não respondido, true = sim, false = não
     honorariosCalculo: '',
+    incluirMultaArt523: null, // null = não respondido, true = sim, false = não
+    dataCalculoMulta: '', // Data do cálculo da multa
+    dataCalculoCustas: '', // Data do cálculo das custas
+    valorPrincipalMulta: '', // Valor principal para multa
+    valorPrincipalCorrigido: '', // Valor principal corrigido
+    jurosPrincipal: '', // Juros do valor principal
+    totalPrincipal: '', // Total do valor principal
+    valorCustasMulta: '', // Valor das custas para multa
+    valorCustasCorrigido: '', // Valor das custas corrigido
+    jurosCustas: '', // Juros das custas
+    totalCustas: '', // Total das custas
+    totalGeralMulta: '', // Total geral da multa
+    honorariosSucumbenciaMulta: '', // Honorários de sucumbência da multa
+    multa523: '', // Multa do 523 (10% do total geral)
+    tipoValores: null, // null = não respondido, 'provisorio' = provisório, 'final' = final
     descontosTotal: '',
     saldoRepasse: '',
     taxaTransferencia: '8,00',
@@ -83,10 +97,7 @@ function App() {
       'observacoes'
     ]
     
-    // Adicionar campos de reembolso apenas se incluirReembolso for true
-    if (formData.incluirReembolso) {
-      requiredFields.push('tipoReembolso', 'reembolsoCustas')
-    }
+    // Campos de reembolso não são mais necessários pois foram substituídos por custas judiciais
 
     // Se escolher "Outro Status", exigir a descrição
     if (formData.status === 'Outro Status') {
@@ -96,15 +107,21 @@ function App() {
     const hasImage = uploadedFiles.length > 0 || pastedImages.length > 0
     const hasAnsweredHonorarios = formData.incluirHonorariosCalculo !== null
     const hasAnsweredReembolso = formData.incluirReembolso !== null
+    const hasCustasJudiciais = formData.custasJudiciais.length > 0
+    const hasAnsweredMulta = formData.incluirMultaArt523 !== null
+    const hasAnsweredTipoValores = formData.tipoValores !== null
     
     const emptyFields = requiredFields.filter(field => !formData[field]?.trim())
     
     return {
-      isValid: emptyFields.length === 0 && hasImage && hasAnsweredHonorarios && hasAnsweredReembolso,
+      isValid: emptyFields.length === 0 && hasImage && hasAnsweredHonorarios && hasAnsweredReembolso && hasCustasJudiciais && hasAnsweredMulta && hasAnsweredTipoValores,
       emptyFields,
       hasImage,
       hasAnsweredHonorarios,
-      hasAnsweredReembolso
+      hasAnsweredReembolso,
+      hasCustasJudiciais,
+      hasAnsweredMulta,
+      hasAnsweredTipoValores
     }
   }
 
@@ -123,10 +140,7 @@ function App() {
       'observacoes'
     ]
     
-    // Adicionar campos de reembolso apenas se incluirReembolso for true
-    if (formData.incluirReembolso) {
-      requiredFields.push('tipoReembolso', 'reembolsoCustas')
-    }
+    // Campos de reembolso não são mais necessários pois foram substituídos por custas judiciais
 
     // Se "Outro Status" estiver selecionado, contar campo extra
     if (formData.status === 'Outro Status') {
@@ -137,9 +151,12 @@ function App() {
     const hasImage = uploadedFiles.length > 0 || pastedImages.length > 0 ? 1 : 0
     const hasAnsweredHonorarios = formData.incluirHonorariosCalculo !== null ? 1 : 0
     const hasAnsweredReembolso = formData.incluirReembolso !== null ? 1 : 0
-    const totalFields = requiredFields.length + 3 // +1 para a imagem, +1 para honorários, +1 para reembolso
+    const hasCustasJudiciais = formData.custasJudiciais.length > 0 ? 1 : 0
+    const hasAnsweredMulta = formData.incluirMultaArt523 !== null ? 1 : 0
+    const hasAnsweredTipoValores = formData.tipoValores !== null ? 1 : 0
+    const totalFields = requiredFields.length + 6 // +1 para a imagem, +1 para honorários, +1 para reembolso, +1 para custas, +1 para multa, +1 para tipo valores
     
-    return Math.round(((filledFields + hasImage + hasAnsweredHonorarios + hasAnsweredReembolso) / totalFields) * 100)
+    return Math.round(((filledFields + hasImage + hasAnsweredHonorarios + hasAnsweredReembolso + hasCustasJudiciais + hasAnsweredMulta + hasAnsweredTipoValores) / totalFields) * 100)
   }
 
   // Função para limpar formulário
@@ -157,10 +174,24 @@ function App() {
       percentualSucumbencia: '',
       honorariosSucumbencia: '',
       incluirReembolso: null,
-      tipoReembolso: '',
-      reembolsoCustas: '',
+      custasJudiciais: [],
       incluirHonorariosCalculo: null,
       honorariosCalculo: '',
+      incluirMultaArt523: null,
+      dataCalculoMulta: '',
+      dataCalculoCustas: '',
+      valorPrincipalMulta: '',
+      valorPrincipalCorrigido: '',
+      jurosPrincipal: '',
+      totalPrincipal: '',
+      valorCustasMulta: '',
+      valorCustasCorrigido: '',
+      jurosCustas: '',
+      totalCustas: '',
+      totalGeralMulta: '',
+      honorariosSucumbenciaMulta: '',
+      multa523: '',
+      tipoValores: null,
       descontosTotal: '',
       saldoRepasse: '',
       taxaTransferencia: '8,00',
@@ -168,6 +199,43 @@ function App() {
     })
     setUploadedFiles([])
     setPastedImages([])
+  }
+
+  // Função para obter valores da multa (preenchidos manualmente)
+  const getMultaValues = () => {
+    if (!formData.incluirMultaArt523) {
+      return {
+        valorPrincipalCorrigido: 0,
+        jurosPrincipal: 0,
+        totalPrincipal: 0,
+        valorCustasCorrigido: 0,
+        jurosCustas: 0,
+        totalCustas: 0,
+        totalGeral: 0,
+        honorariosSucumbenciaMulta: 0
+      }
+    }
+
+    // Converter valores preenchidos para números
+    const valorPrincipalCorrigido = parseFloat(formData.valorPrincipalCorrigido?.replace(/[^\d,]/g, '').replace(',', '.')) || 0
+    const jurosPrincipal = parseFloat(formData.jurosPrincipal?.replace(/[^\d,]/g, '').replace(',', '.')) || 0
+    const totalPrincipal = parseFloat(formData.totalPrincipal?.replace(/[^\d,]/g, '').replace(',', '.')) || 0
+    const valorCustasCorrigido = parseFloat(formData.valorCustasCorrigido?.replace(/[^\d,]/g, '').replace(',', '.')) || 0
+    const jurosCustas = parseFloat(formData.jurosCustas?.replace(/[^\d,]/g, '').replace(',', '.')) || 0
+    const totalCustas = parseFloat(formData.totalCustas?.replace(/[^\d,]/g, '').replace(',', '.')) || 0
+    const totalGeral = parseFloat(formData.totalGeralMulta?.replace(/[^\d,]/g, '').replace(',', '.')) || 0
+    const honorariosSucumbenciaMulta = parseFloat(formData.honorariosSucumbenciaMulta?.replace(/[^\d,]/g, '').replace(',', '.')) || 0
+
+    return {
+      valorPrincipalCorrigido,
+      jurosPrincipal,
+      totalPrincipal,
+      valorCustasCorrigido,
+      jurosCustas,
+      totalCustas,
+      totalGeral,
+      honorariosSucumbenciaMulta
+    }
   }
 
   // Função para calcular valores automaticamente
@@ -207,10 +275,21 @@ function App() {
     const honorariosContVal = parseFloat(newData.honorariosContratuais?.replace(/[^\d,]/g, '').replace(',', '.')) || 0
     const honorariosSucumVal = parseFloat(newData.honorariosSucumbencia?.replace(/[^\d,]/g, '').replace(',', '.')) || 0
     const honorariosCalcVal = newData.incluirHonorariosCalculo ? (parseFloat(newData.honorariosCalculo?.replace(/[^\d,]/g, '').replace(',', '.')) || 0) : 0
-    const reembolsoVal = newData.incluirReembolso ? reembolsoCustas : 0
     
-    if (honorariosContVal || honorariosSucumVal || reembolsoVal || honorariosCalcVal) {
-      const descontosTotal = honorariosContVal + honorariosSucumVal + reembolsoVal + honorariosCalcVal
+    // Calcular reembolso total das custas judiciais (apenas as pagas pelo escritório)
+    const reembolsoVal = newData.custasJudiciais
+      .filter(custa => custa.quemPagou === 'escritorio')
+      .reduce((total, custa) => total + (parseFloat(custa.valor?.replace(/[^\d,]/g, '').replace(',', '.')) || 0), 0)
+    
+    // Calcular honorários de sucumbência da multa se aplicável
+    let honorariosSucumbenciaMulta = 0
+    if (newData.incluirMultaArt523) {
+      const multaValues = getMultaValues()
+      honorariosSucumbenciaMulta = multaValues.honorariosSucumbenciaMulta
+    }
+    
+    if (honorariosContVal || honorariosSucumVal || reembolsoVal || honorariosCalcVal || honorariosSucumbenciaMulta) {
+      const descontosTotal = honorariosContVal + honorariosSucumVal + reembolsoVal + honorariosCalcVal + honorariosSucumbenciaMulta
       newData.descontosTotal = descontosTotal.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
       
       // Calcular saldo de repasse
@@ -225,7 +304,7 @@ function App() {
 
   const handleInputChange = (field, value) => {
     // Aplicar formatação monetária para campos de valor
-    const currencyFields = ['custasCS', 'valorDepositado', 'valorPrincipal', 'reembolsoCustas']
+    const currencyFields = ['custasCS', 'valorDepositado', 'valorPrincipal', 'reembolsoCustas', 'valorPrincipalMulta', 'valorCustasMulta', 'valorPrincipalCorrigido', 'jurosPrincipal', 'totalPrincipal', 'valorCustasCorrigido', 'jurosCustas', 'totalCustas', 'totalGeralMulta', 'honorariosSucumbenciaMulta']
     if (currencyFields.includes(field)) {
       value = formatCurrency(value)
     }
@@ -233,6 +312,7 @@ function App() {
     // Se marcar "Não" para incluir reembolso:
     // - zera o valor de reembolso
     // - limpa o tipo de reembolso
+    // - limpa o array de custas judiciais
     // - oculta automaticamente os campos (já controlado pelo JSX)
     let baseData = formData
     if (field === 'incluirReembolso' && value === false) {
@@ -241,10 +321,114 @@ function App() {
         incluirReembolso: false,
         tipoReembolso: '',
         reembolsoCustas: '0,00',
+        custasJudiciais: [], // Limpa o array de custas judiciais
       }
     }
     
     const newData = calculateValues(field, value, baseData)
+    
+    // Preencher automaticamente os valores da multa 523 com os valores principais
+    if (field === 'valorPrincipal' && newData.incluirMultaArt523) {
+      newData.valorPrincipalMulta = value
+    }
+    
+    if (field === 'custasCS' && newData.incluirMultaArt523) {
+      newData.valorCustasMulta = value
+    }
+    
+    // Quando ativar a multa 523, preencher automaticamente com os valores existentes
+    if (field === 'incluirMultaArt523' && value === true) {
+      if (newData.valorPrincipal) {
+        newData.valorPrincipalMulta = newData.valorPrincipal
+      }
+      if (newData.custasCS) {
+        newData.valorCustasMulta = newData.custasCS
+      }
+    }
+    
+    // Calcular totais automaticamente para multa 523
+    if (field === 'valorPrincipalCorrigido' || field === 'jurosPrincipal') {
+      const valorCorrigido = field === 'valorPrincipalCorrigido' ? 
+        parseFloat(value?.replace(/[^\d,]/g, '').replace(',', '.')) || 0 : 
+        parseFloat(newData.valorPrincipalCorrigido?.replace(/[^\d,]/g, '').replace(',', '.')) || 0
+      
+      const juros = field === 'jurosPrincipal' ? 
+        parseFloat(value?.replace(/[^\d,]/g, '').replace(',', '.')) || 0 : 
+        parseFloat(newData.jurosPrincipal?.replace(/[^\d,]/g, '').replace(',', '.')) || 0
+      
+      const total = valorCorrigido + juros
+      newData.totalPrincipal = total.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+      
+      // Recalcular total geral e honorários
+      const totalCustas = parseFloat(newData.totalCustas?.replace(/[^\d,]/g, '').replace(',', '.')) || 0
+      const totalGeral = total + totalCustas
+      newData.totalGeralMulta = totalGeral.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+      const honorariosFase = totalGeral * 0.10
+      newData.honorariosSucumbenciaMulta = honorariosFase.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+      
+      // Calcular honorários de sucumbência da multa do art 523
+      const percentualSucumbencia = parseFloat(newData.percentualSucumbencia?.replace('%', '')) || 0
+      const multa523 = totalGeral * 0.10 // Multa do 523 = 10% do total geral
+      const totalGeralComMulta = totalGeral + multa523 + multa523 // Total Geral = Total + Honorários + Multa
+      const honorariosSucumbenciaMulta = (totalGeralComMulta - multa523) * (percentualSucumbencia / 100)
+      newData.honorariosSucumbenciaMulta = honorariosSucumbenciaMulta.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+      
+      // Armazenar a multa do 523 para uso posterior
+      newData.multa523 = multa523.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+    }
+    
+    if (field === 'valorCustasCorrigido' || field === 'jurosCustas') {
+      const valorCorrigido = field === 'valorCustasCorrigido' ? 
+        parseFloat(value?.replace(/[^\d,]/g, '').replace(',', '.')) || 0 : 
+        parseFloat(newData.valorCustasCorrigido?.replace(/[^\d,]/g, '').replace(',', '.')) || 0
+      
+      const juros = field === 'jurosCustas' ? 
+        parseFloat(value?.replace(/[^\d,]/g, '').replace(',', '.')) || 0 : 
+        parseFloat(newData.jurosCustas?.replace(/[^\d,]/g, '').replace(',', '.')) || 0
+      
+      const total = valorCorrigido + juros
+      newData.totalCustas = total.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+      
+      // Recalcular total geral e honorários
+      const totalPrincipal = parseFloat(newData.totalPrincipal?.replace(/[^\d,]/g, '').replace(',', '.')) || 0
+      const totalGeral = totalPrincipal + total
+      newData.totalGeralMulta = totalGeral.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+      const honorariosFase = totalGeral * 0.10
+      newData.honorariosSucumbenciaMulta = honorariosFase.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+      
+      // Calcular honorários de sucumbência da multa do art 523
+      const percentualSucumbencia = parseFloat(newData.percentualSucumbencia?.replace('%', '')) || 0
+      const multa523 = totalGeral * 0.10 // Multa do 523 = 10% do total geral
+      const totalGeralComMulta = totalGeral + multa523 + multa523 // Total Geral = Total + Honorários + Multa
+      const honorariosSucumbenciaMulta = (totalGeralComMulta - multa523) * (percentualSucumbencia / 100)
+      newData.honorariosSucumbenciaMulta = honorariosSucumbenciaMulta.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+      
+      // Armazenar a multa do 523 para uso posterior
+      newData.multa523 = multa523.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+    }
+    
+    // Calcular total geral automaticamente quando os totais individuais mudarem
+    if (field === 'totalPrincipal' || field === 'totalCustas') {
+      const totalPrincipal = parseFloat(newData.totalPrincipal?.replace(/[^\d,]/g, '').replace(',', '.')) || 0
+      const totalCustas = parseFloat(newData.totalCustas?.replace(/[^\d,]/g, '').replace(',', '.')) || 0
+      const totalGeral = totalPrincipal + totalCustas
+      newData.totalGeralMulta = totalGeral.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+      
+      // Calcular honorários da fase de cumprimento/execução (10% do total)
+      const honorariosFase = totalGeral * 0.10
+      newData.honorariosSucumbenciaMulta = honorariosFase.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+      
+      // Calcular honorários de sucumbência da multa do art 523
+      const percentualSucumbencia = parseFloat(newData.percentualSucumbencia?.replace('%', '')) || 0
+      const multa523 = totalGeral * 0.10 // Multa do 523 = 10% do total geral
+      const totalGeralComMulta = totalGeral + multa523 + multa523 // Total Geral = Total + Honorários + Multa
+      const honorariosSucumbenciaMulta = (totalGeralComMulta - multa523) * (percentualSucumbencia / 100)
+      newData.honorariosSucumbenciaMulta = honorariosSucumbenciaMulta.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+      
+      // Armazenar a multa do 523 para uso posterior
+      newData.multa523 = multa523.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+    }
+
     setFormData(newData)
   }
 
@@ -294,6 +478,43 @@ function App() {
     }
   }
 
+  // Funções para gerenciar custas judiciais
+  const addCustaJudicial = () => {
+    const novaCusta = {
+      id: Date.now() + Math.random(),
+      valor: '',
+      dataPagamento: '',
+      quemPagou: 'cliente', // 'cliente' ou 'escritorio'
+      tipoReembolso: '',
+      tipoReembolsoPersonalizado: ''
+    }
+    setFormData(prev => ({
+      ...prev,
+      custasJudiciais: [...prev.custasJudiciais, novaCusta]
+    }))
+  }
+
+  const updateCustaJudicial = (id, field, value) => {
+    // Aplicar formatação de moeda para o campo 'valor'
+    if (field === 'valor') {
+      value = formatCurrency(value)
+    }
+    
+    setFormData(prev => ({
+      ...prev,
+      custasJudiciais: prev.custasJudiciais.map(custa =>
+        custa.id === id ? { ...custa, [field]: value } : custa
+      )
+    }))
+  }
+
+  const removeCustaJudicial = (id) => {
+    setFormData(prev => ({
+      ...prev,
+      custasJudiciais: prev.custasJudiciais.filter(custa => custa.id !== id)
+    }))
+  }
+
   const handlePrintPreview = () => {
     const validation = validateRequiredFields()
     
@@ -307,6 +528,12 @@ function App() {
       }
       if (!validation.hasAnsweredReembolso) {
         message += "\n\nVocê precisa responder se deseja incluir reembolso para o escritório."
+      }
+      if (!validation.hasCustasJudiciais) {
+        message += "\n\nVocê precisa adicionar pelo menos uma custa judicial."
+      }
+      if (!validation.hasAnsweredTipoValores) {
+        message += "\n\nVocê precisa selecionar se os valores são provisórios ou finais."
       }
       alert(message)
       return
@@ -486,12 +713,12 @@ function App() {
         </div>
     </div>
     ${printContent.innerHTML.replace(/<div class="header"[^>]*>.*?<\/div>/s, '')}
-    <div style="margin-top: 2cm; page-break-inside: avoid;">
-      <div style="text-align: left; font-family: 'Times New Roman', Times, serif; font-size: 11pt; line-height: 1.4; margin-left: 0;">
+    <div style="margin-top: 0.5cm; page-break-inside: avoid;">
+      <div style="text-align: left; font-family: 'Times New Roman', Times, serif; font-size: 10pt; line-height: 1.2; margin-left: 0;">
         <div>Dolejal Advocacia Especializada</div>
-        <div style="margin-top: 0.3cm;">Porto Alegre/RS, ${formattedDate}.</div>
+        <div style="margin-top: 0.1cm;">Porto Alegre/RS, ${formattedDate}.</div>
       </div>
-      <div style="text-align: center; margin-top: 1.2cm; font-family: 'Times New Roman', Times, serif; font-size: 9pt; color: #000;">
+      <div style="text-align: center; margin-top: 0.3cm; font-family: 'Times New Roman', Times, serif; font-size: 8pt; color: #000;">
         <div>Dolejal Advocacia Especializada - CNPJ 36.515.414/0001-09 - OAB: RS 9.794</div>
         <div>Rua Visconde De Pelotas 21, sala 402, Passo da Areia - Porto Alegre - RS - CEP 91030-530</div>
       </div>
@@ -532,7 +759,7 @@ function App() {
     return text.charAt(0).toUpperCase() + text.slice(1)
   }
 
-  const calculoIndex = formData.incluirReembolso ? 4 : 3
+  const calculoIndex = formData.incluirReembolso ? (3 + formData.custasJudiciais.filter(custa => custa.quemPagou === 'escritorio').length) : 3
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-4">
@@ -728,7 +955,7 @@ function App() {
                     </div>
                     
                     <div>
-                      <Label>Incluir Reembolso para o escritório? <span style={{backgroundColor: '#ffff00', color: '#000000', padding: '2px 4px', borderRadius: '3px', fontSize: '10px'}}>(obrigatório)</span></Label>
+                      <Label>Tiveram Custas Judiciais? <span style={{backgroundColor: '#ffff00', color: '#000000', padding: '2px 4px', borderRadius: '3px', fontSize: '10px'}}>(obrigatório)</span></Label>
                       <div className="flex gap-4 mt-2">
                         <label className="flex items-center gap-2">
                           <input
@@ -754,12 +981,84 @@ function App() {
                     </div>
                     
                     {formData.incluirReembolso && (
-                      <>
                         <div>
-                          <Label htmlFor="tipoReembolso">Tipo de Reembolso <span style={{backgroundColor: '#ffff00', color: '#000000', padding: '2px 4px', borderRadius: '3px', fontSize: '10px'}}>(preencher)</span></Label>
-                          <Select value={formData.tipoReembolso} onValueChange={(value) => handleInputChange('tipoReembolso', value)}>
+                        <div className="flex justify-between items-center mb-4">
+                          <Label>Custas Judiciais <span style={{backgroundColor: '#ffff00', color: '#000000', padding: '2px 4px', borderRadius: '3px', fontSize: '10px'}}>(obrigatório)</span></Label>
+                          <button
+                            type="button"
+                            onClick={addCustaJudicial}
+                            className="bg-blue-600 text-white px-3 py-1 rounded text-sm hover:bg-blue-700 flex items-center gap-1"
+                          >
+                            + Adicionar Custa
+                          </button>
+                        </div>
+                        
+                        {formData.custasJudiciais.map((custa, index) => (
+                          <div key={custa.id} className="border border-gray-300 rounded-lg p-4 mb-4 bg-gray-50">
+                            <div className="flex justify-between items-center mb-3">
+                              <h4 className="font-medium text-gray-700">Custa {index + 1}</h4>
+                              <button
+                                type="button"
+                                onClick={() => removeCustaJudicial(custa.id)}
+                                className="text-red-600 hover:text-red-800 text-sm"
+                              >
+                                Remover
+                              </button>
+                            </div>
+                            
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                              <div>
+                                <Label htmlFor={`valor-${custa.id}`}>Valor da Custa <span style={{backgroundColor: '#ffff00', color: '#000000', padding: '2px 4px', borderRadius: '3px', fontSize: '10px'}}>(preencher)</span></Label>
+                                <Input
+                                  id={`valor-${custa.id}`}
+                                  value={custa.valor}
+                                  onChange={(e) => updateCustaJudicial(custa.id, 'valor', e.target.value)}
+                                  placeholder="R$ 0,00"
+                                />
+                              </div>
+                              
+                              <div>
+                                <Label htmlFor={`data-${custa.id}`}>Data do Pagamento <span style={{backgroundColor: '#ffff00', color: '#000000', padding: '2px 4px', borderRadius: '3px', fontSize: '10px'}}>(preencher)</span></Label>
+                                <Input
+                                  id={`data-${custa.id}`}
+                                  type="date"
+                                  value={custa.dataPagamento}
+                                  onChange={(e) => updateCustaJudicial(custa.id, 'dataPagamento', e.target.value)}
+                                />
+                              </div>
+                              
+                              <div>
+                                <Label>Quem Pagou? <span style={{backgroundColor: '#ffff00', color: '#000000', padding: '2px 4px', borderRadius: '3px', fontSize: '10px'}}>(preencher)</span></Label>
+                                <div className="flex gap-4 mt-2">
+                                  <label className="flex items-center gap-2">
+                                    <input
+                                      type="radio"
+                                      name={`quemPagou-${custa.id}`}
+                                      value="cliente"
+                                      checked={custa.quemPagou === 'cliente'}
+                                      onChange={() => updateCustaJudicial(custa.id, 'quemPagou', 'cliente')}
+                                    />
+                                    Cliente
+                                  </label>
+                                  <label className="flex items-center gap-2">
+                                    <input
+                                      type="radio"
+                                      name={`quemPagou-${custa.id}`}
+                                      value="escritorio"
+                                      checked={custa.quemPagou === 'escritorio'}
+                                      onChange={() => updateCustaJudicial(custa.id, 'quemPagou', 'escritorio')}
+                                    />
+                                    Escritório
+                                  </label>
+                                </div>
+                              </div>
+                              
+                              {custa.quemPagou === 'escritorio' && (
+                                <div>
+                                  <Label htmlFor={`tipo-${custa.id}`}>Tipo de Reembolso <span style={{backgroundColor: '#ffff00', color: '#000000', padding: '2px 4px', borderRadius: '3px', fontSize: '10px'}}>(preencher)</span></Label>
+                                  <Select value={custa.tipoReembolso} onValueChange={(value) => updateCustaJudicial(custa.id, 'tipoReembolso', value)}>
                             <SelectTrigger>
-                              <SelectValue placeholder="Selecione o tipo de reembolso" />
+                                      <SelectValue placeholder="Selecione o tipo" />
                             </SelectTrigger>
                             <SelectContent>
                               <SelectItem value="Reembolso custas apelação">Reembolso custas apelação</SelectItem>
@@ -769,20 +1068,29 @@ function App() {
                               <SelectItem value="Reembolso custas apelação e iniciais">Reembolso custas apelação e iniciais</SelectItem>
                               <SelectItem value="Reembolso custas iniciais e agravo">Reembolso custas iniciais e agravo</SelectItem>
                               <SelectItem value="Reembolso custas apelação, agravo e iniciais">Reembolso custas apelação, agravo e iniciais</SelectItem>
+                                      <SelectItem value="Reembolso custas recurso especial">Reembolso custas recurso especial</SelectItem>
+                                      <SelectItem value="Reembolso custas embargos de declaração">Reembolso custas embargos de declaração</SelectItem>
+                                      <SelectItem value="Outro tipo de reembolso">Outro tipo de reembolso</SelectItem>
                             </SelectContent>
                           </Select>
-                        </div>
                         
-                        <div>
-                          <Label htmlFor="reembolsoCustas">Valor do Reembolso <span style={{backgroundColor: '#ffff00', color: '#000000', padding: '2px 4px', borderRadius: '3px', fontSize: '10px'}}>(preencher)</span></Label>
+                                  {custa.tipoReembolso === 'Outro tipo de reembolso' && (
+                                    <div className="mt-2">
+                                      <Label htmlFor={`tipo-personalizado-${custa.id}`}>Especifique o tipo de reembolso <span style={{backgroundColor: '#ffff00', color: '#000000', padding: '2px 4px', borderRadius: '3px', fontSize: '10px'}}>(preencher)</span></Label>
                           <Input
-                            id="reembolsoCustas"
-                            value={formData.reembolsoCustas}
-                        onChange={(e) => handleInputChange('reembolsoCustas', e.target.value)}
-                        placeholder="R$ 0,00"
+                                        id={`tipo-personalizado-${custa.id}`}
+                                        value={custa.tipoReembolsoPersonalizado || ''}
+                                        onChange={(e) => updateCustaJudicial(custa.id, 'tipoReembolsoPersonalizado', e.target.value)}
+                                        placeholder="Digite o tipo de reembolso"
                       />
                         </div>
-                      </>
+                                  )}
+                                </div>
+                              )}
+                        </div>
+                          </div>
+                        ))}
+                      </div>
                     )}
                     
                     <div className="col-span-full">
@@ -829,6 +1137,183 @@ function App() {
                         )}
                       </div>
                     </div>
+
+                    <div className="col-span-full">
+                      <Label className="text-sm font-medium mb-3 block">
+                        Tem Multa do Art. 523 do CPC? <span style={{backgroundColor: '#ffff00', color: '#000000', padding: '2px 4px', borderRadius: '3px', fontSize: '10px'}}>(obrigatório)</span>
+                      </Label>
+                      <div className="flex items-center space-x-6">
+                        <div className="flex items-center space-x-2">
+                          <input
+                            type="radio"
+                            id="incluirMultaArt523-sim"
+                            name="incluirMultaArt523"
+                            checked={formData.incluirMultaArt523 === true}
+                            onChange={() => handleInputChange('incluirMultaArt523', true)}
+                            className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500"
+                          />
+                          <Label htmlFor="incluirMultaArt523-sim" className="text-sm font-medium">
+                            Sim
+                          </Label>
+                        </div>
+                        <div className="flex items-center space-x-2">
+                          <input
+                            type="radio"
+                            id="incluirMultaArt523-nao"
+                            name="incluirMultaArt523"
+                            checked={formData.incluirMultaArt523 === false}
+                            onChange={() => handleInputChange('incluirMultaArt523', false)}
+                            className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500"
+                          />
+                          <Label htmlFor="incluirMultaArt523-nao" className="text-sm font-medium">
+                            Não
+                          </Label>
+                        </div>
+                      </div>
+                    </div>
+
+                    {formData.incluirMultaArt523 && (
+                      <div className="col-span-full space-y-4 p-4 bg-blue-50 rounded-lg border border-blue-200">
+                        <h4 className="text-lg font-medium text-blue-800">Dados para Cálculo da Multa Art. 523 CPC</h4>
+                        
+                        <div className="space-y-4">
+                          <h5 className="text-md font-medium text-blue-700">Valor Principal</h5>
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                              <Label htmlFor="dataCalculoMulta">Data <span style={{backgroundColor: '#ffff00', color: '#000000', padding: '2px 4px', borderRadius: '3px', fontSize: '10px'}}>(obrigatório)</span></Label>
+                              <Input
+                                id="dataCalculoMulta"
+                                type="date"
+                                value={formData.dataCalculoMulta}
+                                onChange={(e) => handleInputChange('dataCalculoMulta', e.target.value)}
+                              />
+                            </div>
+                            
+                            <div>
+                              <Label htmlFor="valorPrincipalMulta">Valor Principal (R$) <span style={{backgroundColor: '#ffff00', color: '#000000', padding: '2px 4px', borderRadius: '3px', fontSize: '10px'}}>(preenchido automaticamente)</span></Label>
+                              <Input
+                                id="valorPrincipalMulta"
+                                value={formData.valorPrincipalMulta}
+                                readOnly
+                                style={{backgroundColor: '#f5f5f5', cursor: 'not-allowed'}}
+                                placeholder="R$ 0,00"
+                              />
+                            </div>
+                            
+                            <div>
+                              <Label htmlFor="valorPrincipalCorrigido">Valor Corrigido (R$) <span style={{backgroundColor: '#ffff00', color: '#000000', padding: '2px 4px', borderRadius: '3px', fontSize: '10px'}}>(obrigatório)</span></Label>
+                              <Input
+                                id="valorPrincipalCorrigido"
+                                value={formData.valorPrincipalCorrigido}
+                                onChange={(e) => handleInputChange('valorPrincipalCorrigido', e.target.value)}
+                                placeholder="R$ 0,00"
+                              />
+                            </div>
+                            
+                            <div>
+                              <Label htmlFor="jurosPrincipal">Juros (R$) <span style={{backgroundColor: '#ffff00', color: '#000000', padding: '2px 4px', borderRadius: '3px', fontSize: '10px'}}>(obrigatório)</span></Label>
+                              <Input
+                                id="jurosPrincipal"
+                                value={formData.jurosPrincipal}
+                                onChange={(e) => handleInputChange('jurosPrincipal', e.target.value)}
+                                placeholder="R$ 0,00"
+                              />
+                            </div>
+                            
+                            <div>
+                              <Label htmlFor="totalPrincipal">Total (R$) <span style={{backgroundColor: '#ffff00', color: '#000000', padding: '2px 4px', borderRadius: '3px', fontSize: '10px'}}>(calculado automaticamente)</span></Label>
+                              <Input
+                                id="totalPrincipal"
+                                value={formData.totalPrincipal}
+                                readOnly
+                                style={{backgroundColor: '#f5f5f5', cursor: 'not-allowed'}}
+                                placeholder="R$ 0,00"
+                              />
+                            </div>
+                          </div>
+                          
+                          <h5 className="text-md font-medium text-blue-700">Custas Cumprimento de Sentença</h5>
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                              <Label htmlFor="dataCalculoCustas">Data <span style={{backgroundColor: '#ffff00', color: '#000000', padding: '2px 4px', borderRadius: '3px', fontSize: '10px'}}>(obrigatório)</span></Label>
+                              <Input
+                                id="dataCalculoCustas"
+                                type="date"
+                                value={formData.dataCalculoCustas}
+                                onChange={(e) => handleInputChange('dataCalculoCustas', e.target.value)}
+                              />
+                            </div>
+                            
+                            <div>
+                              <Label htmlFor="valorCustasMulta">Valor Custas (R$) <span style={{backgroundColor: '#ffff00', color: '#000000', padding: '2px 4px', borderRadius: '3px', fontSize: '10px'}}>(preenchido automaticamente)</span></Label>
+                              <Input
+                                id="valorCustasMulta"
+                                value={formData.valorCustasMulta}
+                                readOnly
+                                style={{backgroundColor: '#f5f5f5', cursor: 'not-allowed'}}
+                                placeholder="R$ 0,00"
+                              />
+                            </div>
+                            
+                            <div>
+                              <Label htmlFor="valorCustasCorrigido">Valor Corrigido (R$) <span style={{backgroundColor: '#ffff00', color: '#000000', padding: '2px 4px', borderRadius: '3px', fontSize: '10px'}}>(obrigatório)</span></Label>
+                              <Input
+                                id="valorCustasCorrigido"
+                                value={formData.valorCustasCorrigido}
+                                onChange={(e) => handleInputChange('valorCustasCorrigido', e.target.value)}
+                                placeholder="R$ 0,00"
+                              />
+                            </div>
+                            
+                            <div>
+                              <Label htmlFor="jurosCustas">Juros (R$) <span style={{backgroundColor: '#ffff00', color: '#000000', padding: '2px 4px', borderRadius: '3px', fontSize: '10px'}}>(obrigatório)</span></Label>
+                              <Input
+                                id="jurosCustas"
+                                value={formData.jurosCustas}
+                                onChange={(e) => handleInputChange('jurosCustas', e.target.value)}
+                                placeholder="R$ 0,00"
+                              />
+                            </div>
+                            
+                            <div>
+                              <Label htmlFor="totalCustas">Total (R$) <span style={{backgroundColor: '#ffff00', color: '#000000', padding: '2px 4px', borderRadius: '3px', fontSize: '10px'}}>(calculado automaticamente)</span></Label>
+                              <Input
+                                id="totalCustas"
+                                value={formData.totalCustas}
+                                readOnly
+                                style={{backgroundColor: '#f5f5f5', cursor: 'not-allowed'}}
+                                placeholder="R$ 0,00"
+                              />
+                            </div>
+                          </div>
+                          
+                          <h5 className="text-md font-medium text-blue-700">Totais</h5>
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                              <Label htmlFor="totalGeralMulta">Total Geral (R$) <span style={{backgroundColor: '#ffff00', color: '#000000', padding: '2px 4px', borderRadius: '3px', fontSize: '10px'}}>(calculado automaticamente)</span></Label>
+                              <Input
+                                id="totalGeralMulta"
+                                value={formData.totalGeralMulta}
+                                readOnly
+                                style={{backgroundColor: '#f5f5f5', cursor: 'not-allowed'}}
+                                placeholder="R$ 0,00"
+                              />
+                            </div>
+                            
+                            <div>
+                              <Label htmlFor="honorariosSucumbenciaMulta">Honorários de Sucumbência da Multa do Art 523 (R$) <span style={{backgroundColor: '#ffff00', color: '#000000', padding: '2px 4px', borderRadius: '3px', fontSize: '10px'}}>(calculado automaticamente)</span></Label>
+                              <Input
+                                id="honorariosSucumbenciaMulta"
+                                value={formData.honorariosSucumbenciaMulta}
+                                readOnly
+                                style={{backgroundColor: '#f5f5f5', cursor: 'not-allowed'}}
+                                placeholder="R$ 0,00"
+                              />
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    )}
                     
                     <div>
                       <Label htmlFor="descontosTotal">Descontos sobre o Total Geral</Label>
@@ -872,6 +1357,40 @@ function App() {
                       placeholder="Observações adicionais sobre o status do processo..."
                       rows={3}
                     />
+                  </div>
+
+                  <div className="col-span-full">
+                    <Label className="text-sm font-medium mb-3 block">
+                      Tipo dos Valores <span style={{backgroundColor: '#ffff00', color: '#000000', padding: '2px 4px', borderRadius: '3px', fontSize: '10px'}}>(obrigatório)</span>
+                    </Label>
+                    <div className="flex items-center space-x-6">
+                      <div className="flex items-center space-x-2">
+                        <input
+                          type="radio"
+                          id="tipoValores-provisorio"
+                          name="tipoValores"
+                          checked={formData.tipoValores === 'provisorio'}
+                          onChange={() => handleInputChange('tipoValores', 'provisorio')}
+                          className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500"
+                        />
+                        <Label htmlFor="tipoValores-provisorio" className="text-sm font-medium">
+                          Provisório
+                        </Label>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <input
+                          type="radio"
+                          id="tipoValores-final"
+                          name="tipoValores"
+                          checked={formData.tipoValores === 'final'}
+                          onChange={() => handleInputChange('tipoValores', 'final')}
+                          className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500"
+                        />
+                        <Label htmlFor="tipoValores-final" className="text-sm font-medium">
+                          Final
+                        </Label>
+                      </div>
+                    </div>
                   </div>
                   
                   {/* Botão Limpar Formulário */}
@@ -988,10 +1507,10 @@ function App() {
                         color: '#000'
                       }}
                     >
-                      <style jsx>{`
+                      <style>{`
                         @media print {
                           #prestacao-preview {
-                            margin: 2.54cm !important;
+                            margin: 0.8cm !important;
                             padding: 0 !important;
                             border: none !important;
                             box-shadow: none !important;
@@ -1000,28 +1519,48 @@ function App() {
                           }
                           #prestacao-preview * {
                             font-family: "Times New Roman", Times, serif !important;
-                            font-size: 12pt !important;
-                            line-height: 1.5 !important;
+                            font-size: 9pt !important;
+                            line-height: 1.1 !important;
                             color: black !important;
                           }
                           #prestacao-preview h2 {
                             font-weight: bold !important;
-                            font-size: 14pt !important;
-                            margin-bottom: 1cm !important;
+                            font-size: 11pt !important;
+                            margin-bottom: 0.2cm !important;
                           }
                           #prestacao-preview p {
-                            margin-bottom: 0.8cm !important;
+                            margin-bottom: 0.02cm !important;
+                            line-height: 1.0 !important;
                           }
                           #prestacao-preview p.no-gap {
                             margin-bottom: 0 !important;
+                            line-height: 1.0 !important;
+                          }
+                          #prestacao-preview p.compact {
+                            margin-bottom: 0.01cm !important;
+                            line-height: 1.0 !important;
+                            padding: 0 !important;
+                          }
+                          #prestacao-preview table {
+                            font-size: 8pt !important;
+                          }
+                          #prestacao-preview table td {
+                            padding: 0.05cm !important;
+                          }
+                          #prestacao-preview .header {
+                            height: 1cm !important;
+                            margin-bottom: 0.05cm !important;
+                          }
+                          #prestacao-preview .logo img {
+                            max-height: 0.8cm !important;
                           }
                         }
                       `}</style>
                       
                       <div className="header" style={{ 
                         textAlign: 'center', 
-                        marginBottom: '2cm',
-                        height: '3cm',
+                        marginBottom: '0.5cm',
+                        height: '1.5cm',
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center'
@@ -1039,52 +1578,52 @@ function App() {
                       </div>
                       
                       <h2 style={{ 
-                        fontWeight: 'bold', 
-                        fontSize: '14pt', 
-                        marginBottom: '1cm',
+                        fontWeight: 'bold',
+                        fontSize: '11pt', 
+                        marginBottom: '0.2cm',
                         textAlign: 'center',
                         fontFamily: '"Times New Roman", Times, serif'
                       }}>
                         PRESTAÇÃO DE CONTAS
                       </h2>
                       
-                      <div style={{ lineHeight: '1.5' }}>
+                      <div style={{ lineHeight: '1.1' }}>
                         <p style={{ 
-                          marginBottom: '0.4cm',
+                          marginBottom: '0.1cm',
                           fontFamily: '"Times New Roman", Times, serif',
-                          fontSize: '12pt'
+                          fontSize: '10pt'
                         }}>
                           <strong>Cliente:</strong> {formData.nomeCliente || '[NOME COMPLETO DO CLIENTE]'}
                         </p>
                         
                         <p style={{ 
-                          marginBottom: '0.4cm',
+                          marginBottom: '0.1cm',
                           fontFamily: '"Times New Roman", Times, serif',
-                          fontSize: '12pt'
+                          fontSize: '10pt'
                         }}>
                           <strong>Processos:</strong> {formData.processos || '[NÚMERO DO PROCESSO DE CUMPRIMENTO DE SENTENÇA] e [NÚMERO DO PROCESSO DE CONHECIMENTO]'}
                         </p>
                         
                         <p style={{ 
-                          marginBottom: '0.4cm',
+                          marginBottom: '0.1cm',
                           fontFamily: '"Times New Roman", Times, serif',
-                          fontSize: '12pt'
+                          fontSize: '10pt'
                         }}>
                           <strong>Chave Processo:</strong> {formData.chaveProcesso || '[CHAVE DO PROCESSO DE CUMPRIMENTO DE SENTENÇA] e [CHAVE DO PROCESSO DE CONHECIMENTO]'}
                         </p>
                         
                         <p style={{ 
-                          marginBottom: '0.4cm',
+                          marginBottom: '0.1cm',
                           fontFamily: '"Times New Roman", Times, serif',
-                          fontSize: '12pt'
+                          fontSize: '10pt'
                         }}>
                           *Todos os documentos podem ser consultados no site: https://www.tjrs.jus.br/novo/busca/?return=proc&client=wp_index
                         </p>
                         
                         <p style={{ 
-                          marginBottom: '0.4cm',
+                          marginBottom: '0.1cm',
                           fontFamily: '"Times New Roman", Times, serif',
-                          fontSize: '12pt'
+                          fontSize: '10pt'
                         }}>
                           <strong>Status:</strong> {
                             formData.status === 'Outro Status'
@@ -1094,104 +1633,455 @@ function App() {
                         </p>
                         
                         <p style={{ 
-                          marginBottom: '0.4cm',
+                          marginBottom: '0.1cm',
                           fontFamily: '"Times New Roman", Times, serif',
-                          fontSize: '12pt'
+                          fontSize: '10pt'
                         }}>
-                          <strong>Valor total da condenação provisória, incluindo honorários de sucumbência e contratual:</strong>
+                          <strong>Valor total da condenação provisória, incluindo honorários de sucumbência e contratual - Vide anexo 1.</strong>
                         </p>
                         
+                        <p className="compact" style={{ 
+                          marginBottom: '0.01cm',
+                              fontFamily: '"Times New Roman", Times, serif',
+                              fontSize: '10pt',
+                          lineHeight: '1.0'
+                          }}>
+                          <strong>Valor Principal do Processo:</strong> {formData.valorPrincipal ? `R$ ${formData.valorPrincipal}` : 'R$[VALOR PRINCIPAL DO PROCESSO]'}
+                          </p>
                         
-                        <p style={{ 
-                          marginBottom: '0.4cm',
+                        <p className="compact" style={{ 
+                          marginBottom: '0.01cm',
                           fontFamily: '"Times New Roman", Times, serif',
-                          fontSize: '12pt',
-                          fontStyle: 'italic'
+                          fontSize: '10pt',
+                          lineHeight: '1.0'
                         }}>
                           *Custas cumprimento de sentença: {formData.custasCS ? `R$ ${formData.custasCS}` : 'R$[VALOR DAS CUSTAS DE CUMPRIMENTO DE SENTENÇA]'}
                         </p>
                         
-                        <p style={{ 
-                          marginBottom: '0.4cm',
+                        {formData.custasJudiciais.filter(custa => custa.quemPagou === 'cliente').map((custa, index) => {
+                          const dataFormatada = custa.dataPagamento ? new Date(custa.dataPagamento).toLocaleDateString('pt-BR') : 'xx/xx/xxxx'
+                          return (
+                            <p key={custa.id} className="compact" style={{ 
+                              marginBottom: '0.01cm',
                           fontFamily: '"Times New Roman", Times, serif',
-                          fontSize: '12pt'
-                        }}>
-                          <strong>Valor provisório depositado pelo réu:</strong> {formData.valorDepositado ? `R$ ${formData.valorDepositado}` : 'R$[VALOR TOTAL DEPOSITADO PELO RÉU]'}
-                        </p>
+                              fontSize: '10pt',
+                              lineHeight: '1.0'
+                            }}>
+                              Custas judiciais {custa.valor ? `R$ ${custa.valor}` : 'R$[VALOR]'} Data {dataFormatada}
+                            </p>
+                          )
+                        })}
                         
-                        <div style={{ marginBottom: '0.4cm' }}>
-                          <p style={{ 
+                        
+                        {formData.incluirMultaArt523 && (() => {
+                          const multaValues = getMultaValues()
+                          return (
+                            <div style={{ 
+                              marginBottom: '0.3cm',
+                              fontFamily: '"Times New Roman", Times, serif',
+                              fontSize: '10pt'
+                            }}>
+                              <h3 style={{ 
+                                textAlign: 'center',
                             fontFamily: '"Times New Roman", Times, serif',
-                            fontSize: '12pt',
+                            fontSize: '10pt',
                             fontWeight: 'bold',
-                            marginBottom: '0.3cm'
-                          }}>
-                            Descontos sobre o total geral:
-                          </p>
-                          <div style={{ marginLeft: '1cm' }}>
-                            <p style={{ 
-                              marginBottom: '0.2cm',
-                              fontFamily: '"Times New Roman", Times, serif',
-                              fontSize: '12pt'
-                            }}>
-                              1. Honorários contratuais de {formData.percentualHonorarios || '[PERCENTUAL]'}% (pagos pelo cliente): {formData.honorariosContratuais ? `R$ ${formData.honorariosContratuais}` : 'R$[VALOR DOS HONORÁRIOS CONTRATUAIS]'}
-                            </p>
-                            <p style={{ 
-                              marginBottom: '0.2cm',
-                              fontFamily: '"Times New Roman", Times, serif',
-                              fontSize: '12pt'
-                            }}>
-                              2. Honorários de sucumbência (pagos pelo réu): {formData.honorariosSucumbencia ? `R$ ${formData.honorariosSucumbencia}` : 'R$[VALOR DOS HONORÁRIOS DE SUCUMBÊNCIA]'}
-                            </p>
-                            {formData.incluirReembolso && (
-                              <p style={{ 
-                                marginBottom: '0.2cm',
-                                fontFamily: '"Times New Roman", Times, serif',
-                                fontSize: '12pt'
+                              marginBottom: '0.1cm',
+                                backgroundColor: '#ffff00',
+                                padding: '0.2cm'
                               }}>
-                                3. {formData.tipoReembolso || 'Reembolso custas'} pagas pelo escritório: {formData.reembolsoCustas ? `R$ ${formData.reembolsoCustas}` : 'R$[VALOR DO REEMBOLSO DE CUSTAS]'}
-                              </p>
-                            )}
-                            {formData.incluirHonorariosCalculo && (
-                              <p style={{ 
-                                marginBottom: '0.2cm',
-                                fontFamily: '"Times New Roman", Times, serif',
-                                fontSize: '12pt'
+                                Após aplicação das multas de 10% do art. 523, §1°, CPC, e honorários sucumbência art. 523, §1°, CPC, por descumprimento do prazo de pagamento.
+                              </h3>
+                              
+                              <table style={{ 
+                                width: '100%',
+                                borderCollapse: 'collapse',
+                                border: '1px solid #333',
+                                marginBottom: '0.2cm'
                               }}>
-                                {calculoIndex}. Honorários de cálculo do processo (1% sobre valor depositado): {formData.honorariosCalculo ? `R$ ${formData.honorariosCalculo}` : 'R$[VALOR DOS HONORÁRIOS DE CÁLCULO]'}
-                              </p>
-                            )}
+                                <thead>
+                                  <tr>
+                                    <th style={{ 
+                                      border: '1px solid #333',
+                                      padding: '0.1cm',
+                                      fontSize: '9pt',
+                                      fontWeight: 'bold',
+                                      backgroundColor: '#f0f0f0',
+                                      textAlign: 'center'
+                                    }}>Data</th>
+                                    <th style={{ 
+                                      border: '1px solid #333',
+                                      padding: '0.1cm',
+                                      fontSize: '9pt',
+                                      fontWeight: 'bold',
+                                      backgroundColor: '#f0f0f0',
+                                      textAlign: 'center'
+                                    }}>Valor</th>
+                                    <th style={{ 
+                                      border: '1px solid #333',
+                                      padding: '0.1cm',
+                                      fontSize: '9pt',
+                                      fontWeight: 'bold',
+                                      backgroundColor: '#f0f0f0',
+                                      textAlign: 'center'
+                                    }}>Valor Corrigido</th>
+                                    <th style={{ 
+                                      border: '1px solid #333',
+                                      padding: '0.1cm',
+                                      fontSize: '9pt',
+                                      fontWeight: 'bold',
+                                      backgroundColor: '#f0f0f0',
+                                      textAlign: 'center'
+                                    }}>Juros (R$)</th>
+                                    <th style={{ 
+                                      border: '1px solid #333',
+                                      padding: '0.1cm',
+                                      fontSize: '9pt',
+                                      fontWeight: 'bold',
+                                      backgroundColor: '#f0f0f0',
+                                      textAlign: 'center'
+                                    }}>Total (R$)</th>
+                                  </tr>
+                                </thead>
+                                <tbody>
+                                  <tr>
+                                    <td style={{ 
+                                      border: '1px solid #333',
+                                      padding: '0.1cm',
+                                      fontSize: '9pt',
+                                      textAlign: 'center'
+                                    }}>
+                                      {formData.dataCalculoMulta ? new Date(formData.dataCalculoMulta).toLocaleDateString('pt-BR') : '[DATA]'}
+                                    </td>
+                                    <td style={{ 
+                                      border: '1px solid #333',
+                                      padding: '0.1cm',
+                                      fontSize: '9pt',
+                                      textAlign: 'right'
+                                    }}>
+                                      {formData.valorPrincipalMulta ? `R$ ${formData.valorPrincipalMulta}` : 'R$[VALOR]'}
+                                    </td>
+                                    <td style={{ 
+                                      border: '1px solid #333',
+                                      padding: '0.1cm',
+                                      fontSize: '9pt',
+                                      textAlign: 'right'
+                                    }}>
+                                      {formData.valorPrincipalCorrigido ? `R$ ${formData.valorPrincipalCorrigido}` : 'R$[VALOR]'}
+                                    </td>
+                                    <td style={{ 
+                                      border: '1px solid #333',
+                                      padding: '0.1cm',
+                                      fontSize: '9pt',
+                                      textAlign: 'right'
+                                    }}>
+                                      {formData.jurosPrincipal ? `R$ ${formData.jurosPrincipal}` : 'R$[VALOR]'}
+                                    </td>
+                                    <td style={{ 
+                                      border: '1px solid #333',
+                                      padding: '0.1cm',
+                                      fontSize: '9pt',
+                                      textAlign: 'right',
+                                      fontWeight: 'bold'
+                                    }}>
+                                      {formData.totalPrincipal ? `R$ ${formData.totalPrincipal}` : 'R$[VALOR]'}
+                                    </td>
+                                  </tr>
+                                  <tr>
+                                    <td style={{ 
+                                      border: '1px solid #333',
+                                      padding: '0.1cm',
+                                      fontSize: '9pt',
+                                      textAlign: 'center'
+                                    }}>
+                                      {formData.dataCalculoCustas ? new Date(formData.dataCalculoCustas).toLocaleDateString('pt-BR') : '[DATA]'}
+                                    </td>
+                                    <td style={{ 
+                                      border: '1px solid #333',
+                                      padding: '0.1cm',
+                                      fontSize: '9pt',
+                                      textAlign: 'right'
+                                    }}>
+                                      {formData.valorCustasMulta ? `R$ ${formData.valorCustasMulta}` : 'R$[VALOR]'}
+                                    </td>
+                                    <td style={{ 
+                                      border: '1px solid #333',
+                                      padding: '0.1cm',
+                                      fontSize: '9pt',
+                                      textAlign: 'right'
+                                    }}>
+                                      {formData.valorCustasCorrigido ? `R$ ${formData.valorCustasCorrigido}` : 'R$[VALOR]'}
+                                    </td>
+                                    <td style={{ 
+                                      border: '1px solid #333',
+                                      padding: '0.1cm',
+                                      fontSize: '9pt',
+                                      textAlign: 'right'
+                                    }}>
+                                      {formData.jurosCustas ? `R$ ${formData.jurosCustas}` : 'R$[VALOR]'}
+                                    </td>
+                                    <td style={{ 
+                                      border: '1px solid #333',
+                                      padding: '0.1cm',
+                                      fontSize: '9pt',
+                                      textAlign: 'right',
+                                      fontWeight: 'bold'
+                                    }}>
+                                      {formData.totalCustas ? `R$ ${formData.totalCustas}` : 'R$[VALOR]'}
+                                    </td>
+                                  </tr>
+                                </tbody>
+                              </table>
+                              
+                              <div style={{ 
+                                marginBottom: '0.1cm',
+                                fontFamily: '"Times New Roman", Times, serif',
+                                fontSize: '10pt'
+                              }}>
+                                <p style={{ marginBottom: '0.1cm' }}>
+                                  <strong>Total (R$):</strong> {formData.totalGeralMulta ? `R$ ${formData.totalGeralMulta}` : 'R$[VALOR]'}
+                                </p>
+                                <p style={{ marginBottom: '0.1cm' }}>
+                                  <strong>Honorários sucumbência art 523, CPC:</strong> {formData.multa523 ? `R$ ${formData.multa523}` : 'R$[VALOR]'}
+                                </p>
+                                <p style={{ marginBottom: '0.1cm' }}>
+                                  <strong>Multa do 523 § 1º (R$):</strong> {formData.multa523 ? `R$ ${formData.multa523}` : 'R$[VALOR]'}
+                                </p>
+                              <p style={{ 
+                                  marginBottom: '0.1cm',
+                                  backgroundColor: '#d4edda',
+                                  padding: '0.2cm',
+                                  fontWeight: 'bold',
+                                  textAlign: 'center'
+                                }}>
+                                  <strong>Total Geral (R$):</strong> {formData.totalGeralMulta && formData.multa523 ? (() => {
+                                    const total = parseFloat(formData.totalGeralMulta.replace(/[^\d,]/g, '').replace(',', '.')) || 0
+                                    const honorarios = parseFloat(formData.multa523.replace(/[^\d,]/g, '').replace(',', '.')) || 0
+                                    const multa = parseFloat(formData.multa523.replace(/[^\d,]/g, '').replace(',', '.')) || 0
+                                    const totalGeral = total + honorarios + multa
+                                    return `R$ ${totalGeral.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
+                                  })() : 'R$[VALOR]'}
+                                </p>
                           </div>
                         </div>
+                          )
+                        })()}
                         
-                        <p style={{ 
-                          marginBottom: '0.4cm',
+                        <div style={{ 
+                          marginBottom: '0.1cm',
                           fontFamily: '"Times New Roman", Times, serif',
-                          fontSize: '12pt',
-                          fontWeight: 'bold'
-                        }}>
-                          <strong>Descontos Totais:</strong> {formData.descontosTotal ? `R$ ${formData.descontosTotal}` : 'R$[VALOR TOTAL DOS DESCONTOS]'}
-                        </p>
-                        
-                        <p style={{ 
-                          marginBottom: '0.4cm',
-                          fontFamily: '"Times New Roman", Times, serif',
-                          fontSize: '12pt'
-                        }}>
-                          <strong>Saldo provisório de repasse ao cliente:</strong> {formData.saldoRepasse ? `R$ ${formData.saldoRepasse}` : <span style={{fontWeight: 'bold'}}>R$[VALOR LÍQUIDO DE REPASSE AO CLIENTE]</span>}
-                        </p>
+                              fontSize: '10pt'
+                            }}>
+                          <table style={{ 
+                            width: '100%',
+                            borderCollapse: 'collapse',
+                            border: '1px solid #333',
+                            marginBottom: '0.1cm'
+                          }}>
+                            <thead>
+                              <tr style={{ backgroundColor: '#f0f0f0' }}>
+                                <th style={{ 
+                                  border: '1px solid #333',
+                                  padding: '0.3cm',
+                                  textAlign: 'center',
+                          fontSize: '10pt',
+                            fontWeight: 'bold',
+                                  backgroundColor: '#f0f0f0'
+                                }} colSpan="2">
+                                  Resumo Financeiro
+                                </th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              <tr>
+                                <td style={{ 
+                                  border: '1px solid #333',
+                                  padding: '0.1cm',
+                                  fontSize: '9pt',
+                                  fontWeight: 'bold',
+                                  backgroundColor: '#e8f4fd'
+                                }}>
+                                  {formData.tipoValores === 'final' ? 'Valor depositado pelo réu' : 'Valor provisório depositado pelo réu'}
+                                </td>
+                                <td style={{ 
+                                  border: '1px solid #333',
+                                  padding: '0.1cm',
+                                  textAlign: 'right',
+                                  fontSize: '9pt',
+                                  fontWeight: 'bold',
+                                  backgroundColor: '#e8f4fd',
+                                  width: '25%'
+                                }}>
+                                  {formData.valorDepositado ? `R$ ${formData.valorDepositado}` : 'R$[VALOR]'}
+                                </td>
+                              </tr>
+                              
+                              <tr>
+                                <td style={{ 
+                                  border: '1px solid #333',
+                                  padding: '0.1cm',
+                                  fontSize: '9pt',
+                                  fontWeight: 'bold',
+                                  backgroundColor: '#fff2cc'
+                                }}>
+                                  Descontos sobre o valor depositado pelo réu
+                                </td>
+                                <td style={{ 
+                                  border: '1px solid #333',
+                                  padding: '0.1cm',
+                                  textAlign: 'right',
+                                  fontSize: '9pt',
+                                  fontWeight: 'bold',
+                                  backgroundColor: '#fff2cc'
+                                }}>
+                                  {formData.descontosTotal ? `R$ ${formData.descontosTotal}` : 'R$[TOTAL]'}
+                                </td>
+                              </tr>
+                              
+                              <tr>
+                                <td style={{ 
+                                  border: '1px solid #333',
+                                  padding: '0.1cm',
+                                  fontSize: '9pt',
+                                  paddingLeft: '0.5cm'
+                                }}>
+                                  1. Honorários contratuais ({formData.percentualHonorarios || '[PERCENTUAL]'}%) - Pago pelo cliente
+                                </td>
+                                <td style={{ 
+                                  border: '1px solid #333',
+                                  padding: '0.1cm',
+                                  textAlign: 'right',
+                                  fontSize: '11pt'
+                                }}>
+                                  {formData.honorariosContratuais ? `R$ ${formData.honorariosContratuais}` : 'R$[VALOR]'}
+                                </td>
+                              </tr>
+                              
+                              <tr>
+                                <td style={{ 
+                                  border: '1px solid #333',
+                                  padding: '0.1cm',
+                                  fontSize: '9pt',
+                                  paddingLeft: '0.5cm'
+                                }}>
+                                  2. Honorários de sucumbência - Pago pelo réu
+                                </td>
+                                <td style={{ 
+                                  border: '1px solid #333',
+                                  padding: '0.1cm',
+                                  textAlign: 'right',
+                                  fontSize: '11pt'
+                                }}>
+                                  {formData.honorariosSucumbencia ? `R$ ${formData.honorariosSucumbencia}` : 'R$[VALOR]'}
+                                </td>
+                              </tr>
+                              
+                              {formData.incluirMultaArt523 && (
+                                <tr>
+                                  <td style={{ 
+                                    border: '1px solid #333',
+                                    padding: '0.1cm',
+                                    fontSize: '9pt',
+                                    paddingLeft: '0.5cm'
+                                  }}>
+                                    3. Honorários de Sucumbência da Multa do Art 523 - Pago pelo réu
+                                  </td>
+                                  <td style={{ 
+                                    border: '1px solid #333',
+                                    padding: '0.1cm',
+                                    textAlign: 'right',
+                                    fontSize: '11pt'
+                                  }}>
+                                    {formData.honorariosSucumbenciaMulta ? `R$ ${formData.honorariosSucumbenciaMulta}` : 'R$[VALOR]'}
+                                  </td>
+                                </tr>
+                              )}
+                              
+                              {formData.incluirReembolso && formData.custasJudiciais.filter(custa => custa.quemPagou === 'escritorio').map((custa, index) => {
+                                const tipoReembolso = custa.tipoReembolso === 'Outro tipo de reembolso' 
+                                  ? custa.tipoReembolsoPersonalizado || 'Reembolso custas'
+                                  : custa.tipoReembolso || 'Reembolso custas'
+                                
+                                return (
+                                  <tr key={custa.id}>
+                                    <td style={{ 
+                                      border: '1px solid #333',
+                                      padding: '0.1cm',
+                                      fontSize: '9pt',
+                                      paddingLeft: '0.5cm'
+                                    }}>
+                                      {formData.incluirMultaArt523 ? calculoIndex + index + 1 : calculoIndex + index}. {tipoReembolso} - Pago pelo escritório
+                                    </td>
+                                    <td style={{ 
+                                      border: '1px solid #333',
+                                      padding: '0.1cm',
+                                      textAlign: 'right',
+                                      fontSize: '11pt'
+                                    }}>
+                                      {custa.valor ? `R$ ${custa.valor}` : 'R$[VALOR]'}
+                                    </td>
+                                  </tr>
+                                )
+                              })}
+                              
+                            {formData.incluirHonorariosCalculo && (
+                                <tr>
+                                  <td style={{ 
+                                    border: '1px solid #333',
+                                    padding: '0.1cm',
+                                    fontSize: '9pt',
+                                    paddingLeft: '0.5cm'
+                                  }}>
+                                    {formData.incluirMultaArt523 ? calculoIndex + 1 : calculoIndex}. Honorários de cálculo (1% sobre valor depositado)
+                                  </td>
+                                  <td style={{ 
+                                    border: '1px solid #333',
+                                    padding: '0.1cm',
+                                    textAlign: 'right',
+                                    fontSize: '11pt'
+                                  }}>
+                                    {formData.honorariosCalculo ? `R$ ${formData.honorariosCalculo}` : 'R$[VALOR]'}
+                                  </td>
+                                </tr>
+                              )}
+                              
+                              <tr style={{ backgroundColor: '#d4edda' }}>
+                                <td style={{ 
+                                  border: '2px solid #333',
+                                  padding: '0.2cm',
+                                  fontSize: '11pt',
+                                  fontWeight: 'bold',
+                                  textAlign: 'center',
+                                  backgroundColor: '#d4edda'
+                                }}>
+                                  {formData.tipoValores === 'final' ? 'SALDO FINAL DE REPASSE AO CLIENTE' : 'SALDO PROVISÓRIO DE REPASSE AO CLIENTE'}
+                                </td>
+                                <td style={{ 
+                                  border: '2px solid #333',
+                                  padding: '0.2cm',
+                                  textAlign: 'right',
+                                  fontSize: '11pt',
+                                  fontWeight: 'bold',
+                                  backgroundColor: '#d4edda'
+                                }}>
+                                  {formData.saldoRepasse ? `R$ ${formData.saldoRepasse}` : 'R$[XXX.XXX,XX]'}
+                                </td>
+                              </tr>
+                            </tbody>
+                          </table>
+                        </div>
                         
                         <p className="no-gap" style={{ 
                           marginBottom: 0,
                           fontFamily: '"Times New Roman", Times, serif',
-                          fontSize: '12pt'
+                          fontSize: '10pt'
                         }}>
                           *Taxa de transferência: R${formData.taxaTransferencia}.
                         </p>
                         <p className="no-gap" style={{ 
-                          marginBottom: '0.4cm',
+                          marginBottom: '0.1cm',
                           fontFamily: '"Times New Roman", Times, serif',
-                          fontSize: '12pt'
+                          fontSize: '10pt'
                         }}>
                           *O valor recebido ainda sofre correção monetária entre a data da solicitação do alvará e a data de transferência, razão pela qual pode ter acréscimo na quantia "saldo de repasse ao cliente".
                         </p>
@@ -1200,15 +2090,15 @@ function App() {
                           <div style={{ marginBottom: '0.4cm' }}>
                             <p style={{ 
                               fontFamily: '"Times New Roman", Times, serif',
-                              fontSize: '12pt',
+                              fontSize: '10pt',
                               fontWeight: 'bold',
-                              marginBottom: '0.3cm'
+                              marginBottom: '0.1cm'
                             }}>
                               Observações:
                             </p>
                             <p style={{ 
                               fontFamily: '"Times New Roman", Times, serif',
-                              fontSize: '12pt'
+                              fontSize: '10pt'
                             }}>
                               *{formData.observacoes}
                             </p>
@@ -1353,6 +2243,7 @@ function App() {
                           </div>
                         </div>
                       </div>
+
 
                       <div>
                         <h4 className="text-lg font-medium mb-3">5.2. Honorários de Sucumbência</h4>
